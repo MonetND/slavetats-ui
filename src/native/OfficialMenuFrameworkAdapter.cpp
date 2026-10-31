@@ -56,8 +56,8 @@ std::string_view loadoutResultLabel(core::TattooLoadoutRestoreState state) noexc
     return "配置失败";
 }
 std::string formatLoadoutSlotReason(core::TattooArea area, std::int32_t slot, std::string_view reason) {
-    return slot < 0 ? std::format("{}: {}", slotAreaLabel(area), reason)
-        : std::format("{} / 槽 {}: {}", slotAreaLabel(area), slot, reason);
+    return slot < 0 ? std::format("{}: {}", slotAreaDisplayLabel(area), reason)
+        : std::format("{} / 槽 {}: {}", slotAreaDisplayLabel(area), slot, reason);
 }
 LoadoutFooterPresentation loadoutFooterPresentation(TattooLoadoutScreen screen, bool primaryEnabled) noexcept {
     if (screen == TattooLoadoutScreen::restoring) return {};
@@ -364,6 +364,23 @@ SlotPageRange calculateSlotPage(
 std::string_view slotAreaLabel(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:
+        return "BODY";
+    case core::TattooArea::face:
+        return "FACE";
+    case core::TattooArea::hands:
+        return "HANDS";
+    case core::TattooArea::feet:
+        return "FEET";
+    }
+    return "BODY";
+}
+
+// Localized label for on-screen tabs and text. Never use this for the
+// catalog filter or for the SlaveTats protocol "area" value: those must
+// use slotAreaLabel, otherwise the picker filters out every definition.
+std::string_view slotAreaDisplayLabel(core::TattooArea area) noexcept {
+    switch (area) {
+    case core::TattooArea::body:
         return "身";
     case core::TattooArea::face:
         return "脸";
@@ -396,7 +413,7 @@ std::string formatSlotTargetLabel(
     const ActorTarget* actor, core::TattooArea area, std::int32_t slot) {
     const std::string_view name = !actor ? "无活动角色" :
         actor->displayName.empty() ? "无名角色" : std::string_view(actor->displayName);
-    return std::format("{} / {} / 槽 {}", name, slotAreaLabel(area), slot);
+    return std::format("{} / {} / 槽 {}", name, slotAreaDisplayLabel(area), slot);
 }
 
 std::string previewApplyButtonLabel(std::int32_t slot, bool retry) {
@@ -1578,7 +1595,7 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
             if (const auto* capture = workflow.tattooLoadoutCapture()) {
                 const auto counts = loadoutCaptureCounts(*capture);
                 for (std::size_t index = 0; index < counts.size(); ++index)
-                    ImGuiMCP::Text("%s: %zu", slotAreaLabel(static_cast<core::TattooArea>(index)).data(), counts[index]);
+                    ImGuiMCP::Text("%s: %zu", slotAreaDisplayLabel(static_cast<core::TattooArea>(index)).data(), counts[index]);
             }
             ImGuiMCP::BeginDisabled(pending);
             (void)inputTextString("名称##Loadout", workflow.tattooLoadoutName());
@@ -1602,7 +1619,7 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
                 const auto summary = summarizeLoadoutPlan(preview->plan);
                 for (std::size_t index = 0; index < summary.size(); ++index) {
                     const auto& area = summary[index];
-                    ImGuiMCP::SeparatorText(slotAreaLabel(static_cast<core::TattooArea>(index)).data());
+                    ImGuiMCP::SeparatorText(slotAreaDisplayLabel(static_cast<core::TattooArea>(index)).data());
                     ImGuiMCP::Text("添加:%zu / 替换:%zu / 移除:%zu", area.add, area.replace, area.remove);
                     ImGuiMCP::Text("外观: %zu / 未变: %zu / 保留: %zu", area.appearance, area.unchanged, area.preserved);
                 }
@@ -1730,7 +1747,7 @@ void renderCurrentSlots(
                 static SlotAreaTabSelectionState areaTabState;
                 const auto forcedArea = areaTabState.synchronize(workflow.selectedArea());
                 for (std::size_t index = 0; index < areas.size(); ++index) {
-                    const auto label = std::string(slotAreaLabel(areas[index])) + "##SlotArea" +
+                    const auto label = std::string(slotAreaDisplayLabel(areas[index])) + "##SlotArea" +
                         std::to_string(index);
                     const auto flags = forcedArea == areas[index]
                         ? ImGuiMCP::ImGuiTabItemFlags_SetSelected

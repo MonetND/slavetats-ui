@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "native/NativeCatalogBrowserModel.h"
 #include "native/ActorTarget.h"
@@ -208,6 +208,7 @@ struct SlotReadOnlyIndicator {
     std::size_t requestedPage,
     std::size_t pageSize) noexcept;
 [[nodiscard]] std::string_view slotAreaLabel(core::TattooArea area) noexcept;
+[[nodiscard]] std::string_view slotAreaDisplayLabel(core::TattooArea area) noexcept;
 [[nodiscard]] std::vector<std::string> collectVisibleSlotTexturePaths(
     const core::TattooSlots& slots,
     std::size_t pageIndex,

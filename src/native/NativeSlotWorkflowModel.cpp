@@ -10,7 +10,7 @@ namespace {
 
 // Protocol identifier: must stay in sync with the "area" value stored in
 // SlaveTats JSON ("BODY"/"FACE"/"HANDS"/"FEET"). This is NOT display text;
-// the Chinese label lives in OfficialMenuFrameworkAdapter::slotAreaLabel.
+// the Chinese label lives in OfficialMenuFrameworkAdapter::slotAreaDisplayLabel.
 std::string_view areaName(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:

@@ -1528,13 +1528,24 @@ void slotPaginationClampsToSixCardPages() {
 }
 
 void slotAreaLabelsMatchSlaveTatsAreaNames() {
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::body) == "身",
+    // Protocol names: these are compared against the "area" value stored in
+    // SlaveTats JSON and drive the catalog filter, so they must stay ASCII.
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::body) == "BODY",
+        "expected BODY protocol area name");
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::face) == "FACE",
+        "expected FACE protocol area name");
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::hands) == "HANDS",
+        "expected HANDS protocol area name");
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::feet) == "FEET",
+        "expected FEET protocol area name");
+    // Localized labels used only for tabs and on-screen text.
+    expect(stui::native::slotAreaDisplayLabel(stui::core::TattooArea::body) == "身",
         "expected BODY tab label");
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::face) == "脸",
+    expect(stui::native::slotAreaDisplayLabel(stui::core::TattooArea::face) == "脸",
         "expected FACE tab label");
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::hands) == "手",
+    expect(stui::native::slotAreaDisplayLabel(stui::core::TattooArea::hands) == "手",
         "expected HANDS tab label");
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::feet) == "足",
+    expect(stui::native::slotAreaDisplayLabel(stui::core::TattooArea::feet) == "足",
         "expected FEET tab label");
 }
 
