@@ -1507,7 +1507,7 @@ void renderLoadoutStoreStatus(NativeSlotWorkflowModel& workflow) {
         const auto message = "配置: " + error->message;
         ImGuiMCP::TextWrapped("%s", message.c_str());
         ImGuiMCP::BeginDisabled(workflow.tattooLoadoutStorePending());
-        if (ImGuiMCP::Button("Retry##LoadoutStore"))
+        if (ImGuiMCP::Button("重试##LoadoutStore"))
             (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::retryStore);
         ImGuiMCP::EndDisabled();
     }
@@ -1531,7 +1531,7 @@ void renderLoadoutControls(NativeSlotWorkflowModel& workflow) {
     }
     ImGuiMCP::EndDisabled();
     ImGuiMCP::BeginDisabled(pending || !actorEnabled || !selected);
-    if (ImGuiMCP::Button("Load##Loadout")) (void)workflow.requestTattooLoadoutPreview();
+    if (ImGuiMCP::Button("载入##Loadout")) (void)workflow.requestTattooLoadoutPreview();
     ImGuiMCP::EndDisabled();
     ImGuiMCP::SameLine();
     ImGuiMCP::BeginDisabled(pending || !actorEnabled);
@@ -1539,7 +1539,7 @@ void renderLoadoutControls(NativeSlotWorkflowModel& workflow) {
     ImGuiMCP::EndDisabled();
     ImGuiMCP::SameLine();
     ImGuiMCP::BeginDisabled(pending || !selected || workflow.isMutationInFlight());
-    if (ImGuiMCP::Button("Manage##Loadouts")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::manage);
+    if (ImGuiMCP::Button("管理##Loadouts")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::manage);
     ImGuiMCP::EndDisabled();
     if (workflow.tattooLoadoutActorPending()) ImGuiMCP::TextUnformatted("读取最新角色状态...");
     renderLoadoutStoreStatus(workflow);
@@ -2517,7 +2517,7 @@ void renderEditAppearance(
         ImGuiMCP::TextUnformatted(message.c_str());
         if (workflow.appearancePresetRetryAvailable()) {
             ImGuiMCP::SameLine();
-            if (ImGuiMCP::Button("Retry##AppearancePreset")) {
+            if (ImGuiMCP::Button("重试##AppearancePreset")) {
                 (void)workflow.retryAppearancePreset();
             }
         }
@@ -2546,14 +2546,14 @@ void renderEditAppearance(
             (overwritesExisting || canCreateAppearancePreset(
                 appearancePresets.size(), appearancePresetPending));
         ImGuiMCP::BeginDisabled(!createEnabled);
-        if (ImGuiMCP::Button("Save##ConfirmAppearancePreset")) {
+        if (ImGuiMCP::Button("存##ConfirmAppearancePreset")) {
             if (workflow.requestCreateAppearancePreset(presetName)) {
                 ImGuiMCP::CloseCurrentPopup();
             }
         }
         ImGuiMCP::EndDisabled();
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Button("Cancel##SaveAppearancePreset")) {
+        if (ImGuiMCP::Button("取消##SaveAppearancePreset")) {
             ImGuiMCP::CloseCurrentPopup();
         }
         ImGuiMCP::EndPopup();
@@ -2584,7 +2584,7 @@ void renderEditAppearance(
             }
             ImGuiMCP::SameLine();
         }
-        if (ImGuiMCP::Button("Cancel##ManageAppearancePreset")) {
+        if (ImGuiMCP::Button("取消##ManageAppearancePreset")) {
             ImGuiMCP::CloseCurrentPopup();
         }
         ImGuiMCP::EndPopup();
@@ -2605,7 +2605,7 @@ void renderEditAppearance(
             ImGuiMCP::CloseCurrentPopup();
         }
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Button("Cancel##OverwriteAppearancePreset")) {
+        if (ImGuiMCP::Button("取消##OverwriteAppearancePreset")) {
             workflow.cancelAppearancePresetConfirmation();
             ImGuiMCP::CloseCurrentPopup();
         }
@@ -2623,12 +2623,12 @@ void renderEditAppearance(
                 ? appearancePresets[*selectedAppearancePreset].name
                 : std::string{});
         ImGuiMCP::TextUnformatted(message.c_str());
-        if (ImGuiMCP::Button("Delete##ConfirmAppearancePreset")) {
+        if (ImGuiMCP::Button("删除##ConfirmAppearancePreset")) {
             (void)workflow.confirmAppearancePresetDelete();
             ImGuiMCP::CloseCurrentPopup();
         }
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Button("Cancel##DeleteAppearancePreset")) {
+        if (ImGuiMCP::Button("取消##DeleteAppearancePreset")) {
             workflow.cancelAppearancePresetConfirmation();
             ImGuiMCP::CloseCurrentPopup();
         }
@@ -3043,7 +3043,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                 if (ImGuiMCP::Begin("##SlaveTatsCameraTools", nullptr, flags)) {
                     ImGuiMCP::SetWindowFontScale(0.7F);
                     static int focusIndex = 0;
-                    constexpr const char* names[]{"全身", "Face", "Body", "Hands", "Feet"};
+                    constexpr const char* names[]{"全身", "脸", "身体", "手", "脚"};
                     ImGuiMCP::SetNextItemWidth(120.0F);
                     const bool changed = ImGuiMCP::Combo("##CameraFocus", &focusIndex, names, 5);
                     ImGuiMCP::SameLine();
@@ -3362,7 +3362,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         }
     }
     if (const auto* recentError = workflow.recentlyUsedError()) {
-        ImGuiMCP::Text("Recently Used: %s", recentError->message.c_str());
+        ImGuiMCP::Text("最近使用: %s", recentError->message.c_str());
         ImGuiMCP::SameLine();
         if (ImGuiMCP::Button("重试最近记录")) {
             (void)workflow.retryRecentTattoo();
@@ -3647,7 +3647,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                 {glowValues[0], glowValues[1], glowValues[2]}));
         }
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Checkbox("Glossy##CatalogPreview", &glossy)) {
+        if (ImGuiMCP::Checkbox("光泽##CatalogPreview", &glossy)) {
             slotRuntime.setCatalogPreviewGlossy(glossy);
         }
     } else if (slotRuntime.catalogPreviewStarting()) {
@@ -3684,10 +3684,10 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
             if (ImGuiMCP::Button("存纹身")) (void)slotRuntime.saveCatalogPreview();
             ImGuiMCP::EndDisabled();
             ImGuiMCP::SameLine();
-            if (ImGuiMCP::Button("Undo##CatalogPreview")) slotRuntime.undoCatalogPreview();
+            if (ImGuiMCP::Button("撤销##CatalogPreview")) slotRuntime.undoCatalogPreview();
             if (slotRuntime.catalogPreviewError()) {
                 ImGuiMCP::SameLine();
-                if (ImGuiMCP::Button("Retry##CatalogPreview"))
+                if (ImGuiMCP::Button("重试##CatalogPreview"))
                     slotRuntime.retryCatalogPreview();
             }
         } else if (!slotRuntime.catalogPreviewStarting() &&

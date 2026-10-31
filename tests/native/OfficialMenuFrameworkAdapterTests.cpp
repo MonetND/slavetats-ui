@@ -86,19 +86,19 @@ void actorTargetIdentityUsesFixedWidthUppercaseFormId() {
     expect(formatActorTargetIdentity({ActorTargetKind::crosshair, 0xA2C8E, "Lydia"}) ==
                "Lydia [0x000A2C8E]",
         "expected exact actor name and eight-digit uppercase form ID");
-    expect(formatActorTargetIdentity(ActorTarget{}) == "Player [0x00000014]",
+    expect(formatActorTargetIdentity(ActorTarget{}) == "玩家 [0x00000014]",
         "expected Player identity to retain leading zeroes");
     expect(formatActorTargetIdentity({ActorTargetKind::crosshair, 0xFFFFFFFF, ""}) ==
-               "Unnamed Actor [0xFFFFFFFF]",
+               "无名角色 [0xFFFFFFFF]",
         "expected fallback actor name and full-width form ID");
     const ActorTarget player;
-    expect(actorTargetTitle(&player) == "Target: Player [0x00000014]",
+    expect(actorTargetTitle(&player) == "目标: 玩家 [0x00000014]",
         "expected Target title to identify Player");
     const ActorTarget lydia{ActorTargetKind::crosshair, 0xA2C8E, "Lydia"};
-    expect(actorTargetTitle(&lydia) == "Target: Lydia [0x000A2C8E]",
+    expect(actorTargetTitle(&lydia) == "目标: Lydia [0x000A2C8E]",
         "expected Target title to use the selected Actor name");
     const ActorTarget unnamed{ActorTargetKind::crosshair, 0x1234, ""};
-    expect(actorTargetTitle(&unnamed) == "Target: Unnamed Actor [0x00001234]" &&
+    expect(actorTargetTitle(&unnamed) == "目标: 无名角色 [0x00001234]" &&
                actorTargetTitle(nullptr) == "目标: 无",
         "expected unnamed and missing targets never to use a Player title");
 }
@@ -191,7 +191,7 @@ void editAppearanceHeaderAppendsLivePreviewStatusToActorIdentity() {
         "expected applied preview status after the crosshair target identity");
     expect(formatActorTargetIdentityWithPreviewStatus(
                false, &player, LivePreviewStatus::clean) ==
-               "Target: Player [0x00000014]",
+               "目标: 玩家 [0x00000014]",
         "expected clean preview state not to add redundant text");
     expect(formatActorTargetIdentityWithPreviewStatus(
                true, &player, LivePreviewStatus::pending) ==
@@ -873,7 +873,7 @@ void editAppearanceUsesSessionStateForSaveAndThumbnailPresentation() {
 void editAppearanceLayoutHidesEmptyMetadataAndUsesExpandedRanges() {
     using namespace stui::native;
     const std::vector<stui::repository::TattooTextureOption> options{
-        {.label = "Pack default", .path = "marks/default_g.dds"},
+        {.label = "包默认", .path = "marks/default_g.dds"},
         {.label = "Soft glow", .path = "marks/soft_g.dds"},
     };
     const auto hidden = materialTextureSelectorPresentation({}, "marks/current.dds", true);
@@ -1645,7 +1645,7 @@ void domainPresentationUsesDefaultFallback() {
 
 void domainOptionsStartWithAllDomains() {
     const auto options = stui::native::buildCatalogBrowserDomainOptions({"custom", "default"});
-    expect(options == std::vector<std::string>{"All Domains", "custom", "default"},
+    expect(options == std::vector<std::string>{"全部域", "custom", "default"},
         "expected All Domains before discovered domain options");
 }
 
