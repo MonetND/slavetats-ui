@@ -71,9 +71,11 @@ void rejectsPlayerInvalidIdentityAndDistance() {
         candidate(0x22, 5.0F, "Valid"),
     });
 
-    expect(result.size() == 2 && result[0].target.formId == 0x23 &&
-            result[0].target.displayName == "无名角色" &&
-            result[1].target.formId == 0x22,
+    // The placeholder name is localized, so UTF-8 byte ordering puts it after
+    // the ASCII "Valid" entry instead of before it.
+    expect(result.size() == 2 && result[0].target.formId == 0x22 &&
+            result[1].target.formId == 0x23 &&
+            result[1].target.displayName == "无名角色",
         "expected only valid explicit NPC candidates with normalized names");
 }
 

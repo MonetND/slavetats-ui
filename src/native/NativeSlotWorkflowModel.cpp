@@ -8,19 +8,22 @@
 namespace stui::native {
 namespace {
 
+// Protocol identifier: must stay in sync with the "area" value stored in
+// SlaveTats JSON ("BODY"/"FACE"/"HANDS"/"FEET"). This is NOT display text;
+// the Chinese label lives in OfficialMenuFrameworkAdapter::slotAreaLabel.
 std::string_view areaName(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:
-        return "身";
+        return "BODY";
     case core::TattooArea::face:
-        return "脸";
+        return "FACE";
     case core::TattooArea::hands:
-        return "手";
+        return "HANDS";
     case core::TattooArea::feet:
-        return "足";
+        return "FEET";
     }
 
-    return "身";
+    return "BODY";
 }
 
 char foldASCII(char value) noexcept {

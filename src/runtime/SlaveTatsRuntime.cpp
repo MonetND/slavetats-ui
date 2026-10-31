@@ -38,16 +38,18 @@ private:
     const char* m_pool;
 };
 
+// Protocol identifier passed straight to the SlaveTatsNG API; it must match the
+// "area" value stored in SlaveTats JSON. Never localize this string.
 const char* areaName(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:
-        return "身";
+        return "BODY";
     case core::TattooArea::face:
-        return "脸";
+        return "FACE";
     case core::TattooArea::hands:
-        return "手";
+        return "HANDS";
     case core::TattooArea::feet:
-        return "足";
+        return "FEET";
     }
 
     return nullptr;

@@ -70,7 +70,7 @@ void ordersDefinitionsDeterministicallyAndPreservesMetadata() {
     const auto reversedPage = reversedRepository.query();
 
     expect(page.entries.size() == 3, "expected all definitions");
-    expect(page.entries[0].name == "透", "expected folded pack/name ordering");
+    expect(page.entries[0].name == "Alpha", "expected folded pack/name ordering");
     expect(page.entries[1].name == "Beta", "expected stable order within pack");
     expect(page.entries[2].name == "Zulu", "expected later pack last");
     expect(page.entries[0].sourceId == "a.json" && page.entries[0].sourceIndex == 4,
@@ -184,7 +184,7 @@ void emptyMatchResetsPaging() {
 
 void buildsStableSourceAwareFacets() {
     TattooRepository repository({
-        definition("b.json", "Same Pack", "Marks", "B", "b.dds", "身"),
+        definition("b.json", "Same Pack", "Marks", "B", "b.dds", "BODY"),
         definition("a.json", "Same Pack", "marks", "A", "a.dds", "Body"),
         definition("c.json", "Other", "Runes", "C", "c.dds", "Face"),
     });
@@ -333,7 +333,7 @@ void materialFiltersComposeWithAndSemanticsAndContextualFacets() {
 }
 
 void contextualFacetsFollowAreaThenSource() {
-    auto customBody = definition("body-b.json", "Body B", "Runes", "B", "b.dds", "身");
+    auto customBody = definition("body-b.json", "Body B", "Runes", "B", "b.dds", "BODY");
     customBody.domain = "custom";
     TattooRepository repository({
         definition("body-a.json", "Body A", "Marks", "A", "a.dds", "Body"),
@@ -461,7 +461,7 @@ void recentIdentityFilterUsesExactAreaAndNewestFirstOrder() {
 
     expect(ordered.matchedEntries == 2 && ordered.entries.front().name == "Beta",
         "expected newest exact recent identity before pagination");
-    expect(second.entries.front().name == "透",
+    expect(second.entries.front().name == "Alpha",
         "expected older recent identity on the next page");
     expect(empty.matchedEntries == 0,
         "expected area-scoped history not to match another area");
@@ -502,11 +502,11 @@ void resolvesMaterialTextureOptionsByExactRuntimeIdentity() {
         "default", "Marks", "Selected", "Body");
     expect(options.has_value(), "expected one exact runtime identity to resolve options");
     expect(options->glow == std::vector<stui::repository::TattooTextureOption>{
-               {.label = "Pack default", .path = "Pack\\selected_g.dds"},
+               {.label = "包默认", .path = "Pack\\selected_g.dds"},
                {.label = "Blue glow", .path = "Pack\\blue_g.dds"},
            }, "expected glow default prepended and duplicate removed without reordering");
     expect(options->bump == std::vector<stui::repository::TattooTextureOption>{
-               {.label = "Pack default", .path = "Pack\\selected_n.dds"},
+               {.label = "包默认", .path = "Pack\\selected_n.dds"},
                {.label = "Fine normal", .path = "Pack\\fine_n.dds"},
                {.label = "Rough normal", .path = "Pack\\rough_n.dds"},
            }, "expected bump default prepended and duplicate removed without reordering");

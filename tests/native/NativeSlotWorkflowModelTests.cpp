@@ -918,7 +918,7 @@ void staleCompletionsAreIgnored() {
         "expected current FACE completion accepted");
 
     expect(model.selectSlot(1), "expected FACE target selected");
-    model.selectTattoo(tattoo("Face Mark", 1, "脸"));
+    model.selectTattoo(tattoo("Face Mark", 1, "FACE"));
     expect(model.confirmApply(), "expected stale-completion confirmation accepted");
     const auto apply = model.takeApplyRequest();
     model.completeApply(apply->generation + 1, ApplyTattooSuccess{});
@@ -1924,7 +1924,7 @@ void targetChangeClearsAllCachesPagesAndTransientState() {
         expect(model.slotPageIndex() == 1, "expected populated old Actor page");
     }
     expect(model.selectSlot(0), "expected old Actor slot selected");
-    model.selectTattoo(tattoo("Foot", 0, "足"));
+    model.selectTattoo(tattoo("Foot", 0, "FEET"));
     expect(model.previewTattoo(), "expected preview before target change");
     expect(model.selectCrosshairTarget(), "expected target switch");
     expect(!model.targetSlot() && !model.previewTattoo() && !model.previewAppearance() &&

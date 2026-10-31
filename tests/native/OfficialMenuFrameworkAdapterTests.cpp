@@ -36,7 +36,7 @@ void loadoutPresentationDistinguishesOutcomesAndAnchorsFooter() {
         native::loadoutResultLabel(core::TattooLoadoutRestoreState::forwardSynchronizationPending) != "同步待定" ||
         native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackSynchronizationPending) != "回滚同步待定")
         throw std::runtime_error("expected distinct terminal and retry outcomes");
-    if (native::formatLoadoutSlotReason(core::TattooArea::hands, 3, "Locked") != "HANDS / Slot 3: Locked")
+    if (native::formatLoadoutSlotReason(core::TattooArea::hands, 3, "Locked") != "手 / 槽 3: Locked")
         throw std::runtime_error("expected blocker area, slot and reason");
     const auto progress = native::loadoutFooterPresentation(native::TattooLoadoutScreen::restoring, false);
     const auto blocked = native::loadoutFooterPresentation(native::TattooLoadoutScreen::preview, false);
