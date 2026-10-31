@@ -1268,7 +1268,7 @@ void catalogTooltipIncludesInUseSlotDetails() {
     expect(stui::native::formatCatalogTattooTooltip("Corruption", {}) == "Corruption",
         "expected unused tattoo tooltip to contain only its name");
     expect(stui::native::formatCatalogTattooTooltip("Corruption", {2, 5}) ==
-            "Corruption\nIn use: Slots 2, 5",
+            "Corruption\n占用槽位: 2, 5",
         "expected In Use tooltip to list every matching Current Slot");
 }
 

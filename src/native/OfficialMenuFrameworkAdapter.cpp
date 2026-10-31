@@ -1128,7 +1128,7 @@ std::string formatCatalogTattooTooltip(
         return tooltip;
     }
 
-    tooltip += "\n占用:槽 ";
+    tooltip += "\n占用槽位: ";
     for (std::size_t index = 0; index < inUseSlots.size(); ++index) {
         if (index != 0) {
             tooltip += ", ";
