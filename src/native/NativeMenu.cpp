@@ -1,4 +1,4 @@
-#include "native/NativeMenu.h"
+﻿#include "native/NativeMenu.h"
 
 #include <utility>
 
@@ -12,7 +12,7 @@ NativeMenu* g_activeMenu{};
 std::string_view registrationErrorName(MenuRegistrationError error) noexcept {
     switch (error) {
     case MenuRegistrationError::unavailable:
-        return "unavailable";
+        return "不可用";
     case MenuRegistrationError::unsupportedVersion:
         return "unsupported version";
     case MenuRegistrationError::missingExport:

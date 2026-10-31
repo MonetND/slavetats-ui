@@ -1,4 +1,4 @@
-#include "core/ITattooRuntime.h"
+﻿#include "core/ITattooRuntime.h"
 #include "core/SlaveTatsService.h"
 
 #include <exception>
@@ -324,7 +324,7 @@ void invalidSlotQueryActorIsRejected() {
 
     const auto result = service.querySlots(0, TattooArea::body);
 
-    expectError(result, ServiceErrorCode::actorNotFound, "Actor not found");
+    expectError(result, ServiceErrorCode::actorNotFound, "未找到角色");
     expect(runtime.slotQueryCount == 0, "invalid actor must not reach the slot runtime");
 }
 
@@ -402,7 +402,7 @@ void invalidApplyActorIsRejected() {
 
     const auto result = service.applyToSlot(request);
 
-    expectError(result, ServiceErrorCode::actorNotFound, "Actor not found");
+    expectError(result, ServiceErrorCode::actorNotFound, "未找到角色");
     expect(runtime.applyCount == 0, "invalid actor must not reach the apply runtime");
 }
 
@@ -468,9 +468,9 @@ void outOfRangeApplyAlphaIsRejected() {
     const auto aboveResult = service.applyToSlot(aboveRange);
     const auto nanResult = service.applyToSlot(notANumber);
 
-    expectError(belowResult, ServiceErrorCode::applyFailed, "Tattoo alpha must be between 0 and 1");
-    expectError(aboveResult, ServiceErrorCode::applyFailed, "Tattoo alpha must be between 0 and 1");
-    expectError(nanResult, ServiceErrorCode::applyFailed, "Tattoo alpha must be between 0 and 1");
+    expectError(belowResult, ServiceErrorCode::applyFailed, "纹身透明度须在0到1之间");
+    expectError(aboveResult, ServiceErrorCode::applyFailed, "纹身透明度须在0到1之间");
+    expectError(nanResult, ServiceErrorCode::applyFailed, "纹身透明度须在0到1之间");
     expect(runtime.applyCount == 0, "invalid alpha must not reach the apply runtime");
 }
 
@@ -610,7 +610,7 @@ void invalidRemoveTargetIsRejected() {
     auto invalidSlot = validRemoveRequest();
     invalidSlot.slot = -1;
 
-    expectError(service.removeFromSlot(invalidActor), ServiceErrorCode::actorNotFound, "Actor not found");
+    expectError(service.removeFromSlot(invalidActor), ServiceErrorCode::actorNotFound, "未找到角色");
     expectError(service.removeFromSlot(invalidArea), ServiceErrorCode::invalidArea, "Invalid tattoo area");
     expectError(service.removeFromSlot(invalidSlot), ServiceErrorCode::invalidSlot, "Invalid tattoo slot");
     expect(runtime.removeCount == 0, "invalid remove targets must not reach the runtime");
@@ -641,13 +641,13 @@ void removeRuntimeFailureIsReturnedUnchanged() {
     FakeTattooRuntime runtime;
     runtime.removeResult = std::unexpected(ServiceError{
         ServiceErrorCode::externalSlot,
-        "Slot is occupied by an external overlay",
+        "槽位被外部覆盖占用",
     });
     SlaveTatsService service(runtime);
 
     const auto result = service.removeFromSlot(validRemoveRequest());
 
-    expectError(result, ServiceErrorCode::externalSlot, "Slot is occupied by an external overlay");
+    expectError(result, ServiceErrorCode::externalSlot, "槽位被外部覆盖占用");
     expect(runtime.removeCount == 1, "expected one failed remove runtime call");
 }
 
@@ -676,7 +676,7 @@ void zeroAppearanceActorIsRejected() {
 
     const auto result = service.updateAppearance(request);
 
-    expectError(result, ServiceErrorCode::actorNotFound, "Actor not found");
+    expectError(result, ServiceErrorCode::actorNotFound, "未找到角色");
     expect(runtime.updateCount == 0, "zero actor must not reach the appearance runtime");
 }
 
@@ -691,7 +691,7 @@ void zeroAppearanceHandleIsRejectedForFullUpdate() {
     expectError(
         result,
         ServiceErrorCode::staleTattooHandle,
-        "Tattoo handle is invalid; refresh the slot snapshot and try again");
+        "纹身手柄无效；请刷新槽位快照后重试");
     expect(runtime.updateCount == 0, "zero handle must not reach the full appearance update runtime");
 }
 
@@ -706,8 +706,8 @@ void outOfRangeAppearanceColorIsRejected() {
     const auto belowResult = service.updateAppearance(belowRange);
     const auto aboveResult = service.updateAppearance(aboveRange);
 
-    expectError(belowResult, ServiceErrorCode::updateFailed, "Tattoo color must be between 0 and 0xFFFFFF");
-    expectError(aboveResult, ServiceErrorCode::updateFailed, "Tattoo color must be between 0 and 0xFFFFFF");
+    expectError(belowResult, ServiceErrorCode::updateFailed, "纹身颜色须在0到0xFFFFFF之间");
+    expectError(aboveResult, ServiceErrorCode::updateFailed, "纹身颜色须在0到0xFFFFFF之间");
     expect(runtime.updateCount == 0, "out-of-range color must not reach the appearance runtime");
 }
 
@@ -728,10 +728,10 @@ void outOfRangeAppearanceAlphaIsRejected() {
     const auto nanResult = service.updateAppearance(notANumber);
     const auto infinityResult = service.updateAppearance(infinity);
 
-    expectError(belowResult, ServiceErrorCode::updateFailed, "Tattoo alpha must be between 0 and 1");
-    expectError(aboveResult, ServiceErrorCode::updateFailed, "Tattoo alpha must be between 0 and 1");
-    expectError(nanResult, ServiceErrorCode::updateFailed, "Tattoo alpha must be between 0 and 1");
-    expectError(infinityResult, ServiceErrorCode::updateFailed, "Tattoo alpha must be between 0 and 1");
+    expectError(belowResult, ServiceErrorCode::updateFailed, "纹身透明度须在0到1之间");
+    expectError(aboveResult, ServiceErrorCode::updateFailed, "纹身透明度须在0到1之间");
+    expectError(nanResult, ServiceErrorCode::updateFailed, "纹身透明度须在0到1之间");
+    expectError(infinityResult, ServiceErrorCode::updateFailed, "纹身透明度须在0到1之间");
     expect(runtime.updateCount == 0, "out-of-range alpha must not reach the appearance runtime");
 }
 
@@ -746,8 +746,8 @@ void invalidAppearanceGlowIsRejected() {
     const auto belowResult = service.updateAppearance(belowRange);
     const auto aboveResult = service.updateAppearance(aboveRange);
 
-    expectError(belowResult, ServiceErrorCode::updateFailed, "Tattoo glow must be between 0 and 0xFFFFFF");
-    expectError(aboveResult, ServiceErrorCode::updateFailed, "Tattoo glow must be between 0 and 0xFFFFFF");
+    expectError(belowResult, ServiceErrorCode::updateFailed, "纹身发光须在0到0xFFFFFF之间");
+    expectError(aboveResult, ServiceErrorCode::updateFailed, "纹身发光须在0到0xFFFFFF之间");
     expect(runtime.updateCount == 0, "out-of-range glow must not reach the appearance runtime");
 }
 
@@ -777,23 +777,23 @@ void invalidAppearanceMaterialValuesAreRejected() {
     infiniteEmissive.emissiveMult = infinity;
 
     expectError(service.updateAppearance(negativeGlossiness), ServiceErrorCode::updateFailed,
-        "Tattoo glossiness must be finite and non-negative");
+        "纹身光泽须为有限非负数");
     expectError(service.updateAppearance(nanGlossiness), ServiceErrorCode::updateFailed,
-        "Tattoo glossiness must be finite and non-negative");
+        "纹身光泽须为有限非负数");
     expectError(service.updateAppearance(infiniteGlossiness), ServiceErrorCode::updateFailed,
-        "Tattoo glossiness must be finite and non-negative");
+        "纹身光泽须为有限非负数");
     expectError(service.updateAppearance(negativeSpecular), ServiceErrorCode::updateFailed,
-        "Tattoo specular strength must be finite and non-negative");
+        "纹身高光强度须为有限非负数");
     expectError(service.updateAppearance(nanSpecular), ServiceErrorCode::updateFailed,
-        "Tattoo specular strength must be finite and non-negative");
+        "纹身高光强度须为有限非负数");
     expectError(service.updateAppearance(infiniteSpecular), ServiceErrorCode::updateFailed,
-        "Tattoo specular strength must be finite and non-negative");
+        "纹身高光强度须为有限非负数");
     expectError(service.updateAppearance(negativeEmissive), ServiceErrorCode::updateFailed,
-        "Tattoo emissive multiplier must be finite and non-negative");
+        "纹身自发光倍数须为有限非负数");
     expectError(service.updateAppearance(nanEmissive), ServiceErrorCode::updateFailed,
-        "Tattoo emissive multiplier must be finite and non-negative");
+        "纹身自发光倍数须为有限非负数");
     expectError(service.updateAppearance(infiniteEmissive), ServiceErrorCode::updateFailed,
-        "Tattoo emissive multiplier must be finite and non-negative");
+        "纹身自发光倍数须为有限非负数");
     expect(runtime.updateCount == 0, "invalid material values must not reach the appearance runtime");
 }
 
@@ -914,9 +914,9 @@ void invalidLockRequestStopsBeforeRuntime() {
     zeroHandle.runtimeHandle = 0;
 
     expectError(service.setTattooLocked(zeroActor), ServiceErrorCode::actorNotFound,
-        "Actor not found");
+        "未找到角色");
     expectError(service.setTattooLocked(zeroHandle), ServiceErrorCode::staleTattooHandle,
-        "Tattoo handle is invalid; refresh the slot snapshot and try again");
+        "纹身手柄无效；请刷新槽位快照后重试");
     expect(runtime.lockCount == 0, "invalid lock request must not reach the runtime");
 }
 
@@ -941,13 +941,13 @@ void loadoutOperationsRejectZeroActorBeforeRuntime() {
     SlaveTatsService service(runtime);
 
     expectError(service.captureLoadout({.actorFormId = 0}),
-        ServiceErrorCode::actorNotFound, "Actor not found");
+        ServiceErrorCode::actorNotFound, "未找到角色");
     expectError(service.previewLoadout({.actorFormId = 0, .loadout = validLoadout()}),
-        ServiceErrorCode::actorNotFound, "Actor not found");
+        ServiceErrorCode::actorNotFound, "未找到角色");
     expectError(service.restoreLoadout({.actorFormId = 0, .loadout = validLoadout()}),
-        ServiceErrorCode::actorNotFound, "Actor not found");
+        ServiceErrorCode::actorNotFound, "未找到角色");
     expectError(service.retryLoadoutSynchronization({.actorFormId = 0, .retryId = 1}),
-        ServiceErrorCode::actorNotFound, "Actor not found");
+        ServiceErrorCode::actorNotFound, "未找到角色");
     expect(runtime.captureCount == 0 && runtime.previewCount == 0 &&
             runtime.restoreCount == 0 && runtime.retryCount == 0,
         "zero Actor requests must not reach the runtime");
@@ -1016,7 +1016,7 @@ void invalidRetryStopsBeforeRuntime() {
     SlaveTatsService service(runtime);
 
     expectError(service.retryLoadoutSynchronization({.actorFormId = 0x1234, .retryId = 0}),
-        ServiceErrorCode::synchronizeFailed, "Tattoo loadout retry is invalid");
+        ServiceErrorCode::synchronizeFailed, "纹身配置重试无效");
     expect(runtime.retryCount == 0, "invalid retry must not reach the runtime");
 }
 

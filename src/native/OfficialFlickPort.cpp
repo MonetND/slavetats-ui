@@ -1,4 +1,4 @@
-#include "native/OfficialFlickPort.h"
+﻿#include "native/OfficialFlickPort.h"
 
 #include "FLICK/FUCK_API.h"
 
@@ -11,8 +11,8 @@ public:
 
     [[nodiscard]] const char* Name() const override { return "Tattoo Browser"; }
     void Draw() override {
-        FUCK::TextUnformatted("Open the SlaveTats UI tattoo browser.");
-        if (FUCK::Button("Open Tattoo Browser")) {
+        FUCK::TextUnformatted("打开SlaveTats UI纹身浏览器。");
+        if (FUCK::Button("打开纹身库")) {
             (void)launcher_.requestOpen();
         }
     }

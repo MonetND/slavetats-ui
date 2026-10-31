@@ -1,4 +1,4 @@
-#include "core/TattooLoadoutPlanner.h"
+﻿#include "core/TattooLoadoutPlanner.h"
 
 #include <algorithm>
 #include <cctype>
@@ -84,7 +84,7 @@ TattooLoadoutPlanResult planTattooLoadout(const TattooLoadoutPlanningInput& inpu
             std::pair{areaIndex(desired.area), desired.slot}, &desired).second;
         if (!inserted) {
             blockers.push_back(blocker(TattooLoadoutBlockerCode::duplicatePosition,
-                desired.area, desired.slot, "Loadout contains duplicate area and slot entries."));
+                desired.area, desired.slot, "配置包含重复区域与槽位条目。"));
         }
     }
 
@@ -93,11 +93,11 @@ TattooLoadoutPlanResult planTattooLoadout(const TattooLoadoutPlanningInput& inpu
         const auto& snapshot = input.slots[index];
         if (snapshot.actorFormId != input.actorFormId) {
             blockers.push_back(blocker(TattooLoadoutBlockerCode::actorMismatch,
-                expectedArea, -1, "Slot snapshot belongs to a different Actor."));
+                expectedArea, -1, "槽位快照属于其他角色。"));
         }
         if (snapshot.area != expectedArea) {
             blockers.push_back(blocker(TattooLoadoutBlockerCode::areaMismatch,
-                expectedArea, -1, "Slot snapshot belongs to a different area."));
+                expectedArea, -1, "槽位快照属于其他区域。"));
         }
     }
 
@@ -106,12 +106,12 @@ TattooLoadoutPlanResult planTattooLoadout(const TattooLoadoutPlanningInput& inpu
         if (desired.slot < 0 || desired.slot >= snapshot.configuredCount ||
             !findSlot(snapshot, desired.slot)) {
             blockers.push_back(blocker(TattooLoadoutBlockerCode::invalidSlot,
-                desired.area, desired.slot, "Loadout target slot is not configured."));
+                desired.area, desired.slot, "配置目标槽位未配置。"));
             continue;
         }
         if (!availableContains(input.available, desired)) {
             blockers.push_back(blocker(TattooLoadoutBlockerCode::missingTattoo,
-                desired.area, desired.slot, "Loadout tattoo is not installed."));
+                desired.area, desired.slot, "配置纹身未安装。"));
         }
     }
 
@@ -126,7 +126,7 @@ TattooLoadoutPlanResult planTattooLoadout(const TattooLoadoutPlanningInput& inpu
             if (slot.occupancy == SlotOccupancy::external) {
                 if (after) {
                     blockers.push_back(blocker(TattooLoadoutBlockerCode::externalConflict,
-                        expectedArea, slot.index, "Loadout target slot is externally managed."));
+                        expectedArea, slot.index, "配置目标槽位由外部管理。"));
                 } else {
                     plan.preservedExternal.push_back({.area = expectedArea, .slot = slot.index});
                 }
@@ -150,7 +150,7 @@ TattooLoadoutPlanResult planTattooLoadout(const TattooLoadoutPlanningInput& inpu
             if (!kind) continue;
             if (before && before->locked && *kind != TattooLoadoutActionKind::unchanged) {
                 blockers.push_back(blocker(TattooLoadoutBlockerCode::lockedConflict,
-                    expectedArea, slot.index, "Locked tattoo would require mutation."));
+                    expectedArea, slot.index, "锁定纹身将需要变更。"));
                 continue;
             }
             plan.actions.push_back({

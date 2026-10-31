@@ -1,4 +1,4 @@
-#include "native/ActorTargetProvider.h"
+﻿#include "native/ActorTargetProvider.h"
 
 #include <RE/Skyrim.h>
 
@@ -15,7 +15,7 @@ ActorTargetResult actorNotFound() {
 }
 
 std::string normalizeDisplayName(std::string displayName) {
-    return displayName.empty() ? "Unnamed Actor" : std::move(displayName);
+    return displayName.empty() ? "无名角色" : std::move(displayName);
 }
 
 }  // namespace

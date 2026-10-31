@@ -1,4 +1,4 @@
-#include "native/OfficialMenuFrameworkAdapter.h"
+﻿#include "native/OfficialMenuFrameworkAdapter.h"
 #include "native/NativeCatalogBrowserModel.h"
 #include "native/NativeThumbnailController.h"
 #include "native/NativeSlotWorkflowModel.h"
@@ -16,7 +16,7 @@ namespace {
 
 void loadoutPresentationDistinguishesOutcomesAndAnchorsFooter() {
     using namespace stui;
-    if (native::loadoutStatusMessage(0, false) != "No loadouts saved." ||
+    if (native::loadoutStatusMessage(0, false) != "无已存配置。" ||
         native::canCreateLoadout(20, false) || native::canCreateLoadout(0, true) ||
         !native::canCreateLoadout(19, false)) {
         throw std::runtime_error("expected empty, limit and pending presentation");
@@ -29,12 +29,12 @@ void loadoutPresentationDistinguishesOutcomesAndAnchorsFooter() {
         {.area = core::TattooArea::feet}}});
     if (counts != std::array<std::size_t, 4>{2, 0, 0, 1})
         throw std::runtime_error("expected all four capture counts");
-    if (native::loadoutResultLabel(core::TattooLoadoutRestoreState::success) != "Loadout applied" ||
-        native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackComplete) != "Rollback complete" ||
-        native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackIncomplete) != "Rollback incomplete" ||
-        native::loadoutResultLabel(core::TattooLoadoutRestoreState::preflightRejected) != "Preflight rejected" ||
-        native::loadoutResultLabel(core::TattooLoadoutRestoreState::forwardSynchronizationPending) != "Synchronization pending" ||
-        native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackSynchronizationPending) != "Rollback synchronization pending")
+    if (native::loadoutResultLabel(core::TattooLoadoutRestoreState::success) != "配置已应用" ||
+        native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackComplete) != "回滚完成" ||
+        native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackIncomplete) != "回滚不完整" ||
+        native::loadoutResultLabel(core::TattooLoadoutRestoreState::preflightRejected) != "预检被拒绝" ||
+        native::loadoutResultLabel(core::TattooLoadoutRestoreState::forwardSynchronizationPending) != "同步待定" ||
+        native::loadoutResultLabel(core::TattooLoadoutRestoreState::rollbackSynchronizationPending) != "回滚同步待定")
         throw std::runtime_error("expected distinct terminal and retry outcomes");
     if (native::formatLoadoutSlotReason(core::TattooArea::hands, 3, "Locked") != "HANDS / Slot 3: Locked")
         throw std::runtime_error("expected blocker area, slot and reason");
@@ -42,7 +42,7 @@ void loadoutPresentationDistinguishesOutcomesAndAnchorsFooter() {
     const auto blocked = native::loadoutFooterPresentation(native::TattooLoadoutScreen::preview, false);
     if (progress.back || progress.cancel || progress.close || progress.primaryEnabled ||
         !blocked.back || !blocked.cancel || blocked.primaryEnabled ||
-        blocked.primary != "Apply Loadout")
+        blocked.primary != "应用配置")
         throw std::runtime_error("expected no cancellation during mutation and disabled blocked Apply");
     const auto layout = native::calculateLoadoutContentLayout(400, 30);
     if (layout.contentHeight != 370 || layout.footerOffset != 370)
@@ -99,7 +99,7 @@ void actorTargetIdentityUsesFixedWidthUppercaseFormId() {
         "expected Target title to use the selected Actor name");
     const ActorTarget unnamed{ActorTargetKind::crosshair, 0x1234, ""};
     expect(actorTargetTitle(&unnamed) == "Target: Unnamed Actor [0x00001234]" &&
-               actorTargetTitle(nullptr) == "Target: None",
+               actorTargetTitle(nullptr) == "目标: 无",
         "expected unnamed and missing targets never to use a Player title");
 }
 
@@ -130,19 +130,19 @@ void cameraControlFrameStaysOppositeMenuAndBoundsPointer() {
 
 void actorPickerTitlesDistinguishNpcAndFollowerModes() {
     using namespace stui::native;
-    expect(actorPickerTitle(ActorPickerMode::all) == "Choose NPC",
+    expect(actorPickerTitle(ActorPickerMode::all) == "选择NPC",
         "expected the all-Actor picker title");
-    expect(actorPickerTitle(ActorPickerMode::followers) == "Choose Follower",
+    expect(actorPickerTitle(ActorPickerMode::followers) == "选择随从",
         "expected the follower picker title");
 }
 
 void actorTargetStatusAndActionAvailabilityRequireResolvedIdentity() {
     using namespace stui::native;
     const ActorTarget actor;
-    expect(actorTargetStatusLabel(true, nullptr) == "Scanning nearby Actors..." &&
-               actorTargetStatusLabel(true, &actor) == "Scanning nearby Actors...",
+    expect(actorTargetStatusLabel(true, nullptr) == "扫描附近角色..." &&
+               actorTargetStatusLabel(true, &actor) == "扫描附近角色...",
         "expected resolution status to take precedence over an identity");
-    expect(actorTargetStatusLabel(false, nullptr) == "No nearby Actor found",
+    expect(actorTargetStatusLabel(false, nullptr) == "未找到附近角色",
         "expected explicit missing-target status");
     expect(actorTargetStatusLabel(false, &actor).empty(),
         "expected no target error for a resolved Actor");
@@ -163,14 +163,14 @@ void actorPickerShowsScanFailureInsteadOfEmptyState() {
         "expected picker to present the scan failure before an empty result");
     expect(native::loadedActorPickerStatusMessage(native::ActorPickerMode::all,
             true, false, nullptr) ==
-            "Scanning loaded Actors...",
+            "扫描已载入角色...",
         "expected in-flight scan status");
     expect(native::loadedActorPickerStatusMessage(native::ActorPickerMode::all,
             false, false, nullptr) ==
-            "No loaded NPC matches the search.",
+            "无已载入NPC匹配搜索。",
         "expected empty result only when scanning succeeded");
     expect(native::loadedActorPickerStatusMessage(native::ActorPickerMode::followers,
-            false, false, nullptr) == "No loaded followers found.",
+            false, false, nullptr) == "无已载入随从。",
         "expected follower empty state after a successful scan");
     expect(native::loadedActorPickerStatusMessage(native::ActorPickerMode::all,
             false, true, nullptr).empty(),
@@ -477,13 +477,13 @@ void thumbnailPresentationFitsWithoutStretchingAndLabelsFailures() {
            "Slot and Browser should fit the visible tattoo rather than transparent margins");
 
     expect(stui::native::catalogThumbnailStatusLabel(
-               stui::native::NativeThumbnailStatus::loading) == "Loading",
+               stui::native::NativeThumbnailStatus::loading) == "载入",
            "expected explicit loading label");
     expect(stui::native::catalogThumbnailStatusLabel(
-               stui::native::NativeThumbnailStatus::missing) == "Missing",
+               stui::native::NativeThumbnailStatus::missing) == "缺失",
            "expected explicit missing label");
     expect(stui::native::catalogThumbnailStatusLabel(
-               stui::native::NativeThumbnailStatus::broken) == "Broken",
+               stui::native::NativeThumbnailStatus::broken) == "损坏",
            "expected explicit broken label");
     expect(stui::native::catalogThumbnailStatusLabel(
                stui::native::NativeThumbnailStatus::ready).empty(),
@@ -648,8 +648,8 @@ void catalogMaterialBadgesAnchorBottomLeftAndOmitOverflow() {
     const auto layouts = stui::native::calculateCatalogMaterialBadgeLayouts(
         labels, 160.0F, 120.0F, 16.0F, 4.0F, 2.0F, 4.0F, 4.0F, 32.0F);
 
-    expect(layouts.size() == 3 && layouts[0].label == "Glow" &&
-            layouts[1].label == "Bump" && layouts[2].label == "Gloss",
+    expect(layouts.size() == 3 && layouts[0].label == "光" &&
+            layouts[1].label == "凸" && layouts[2].label == "亮",
         "expected every fitting material badge in label order");
     expect(layouts[0].bounds.x == 4.0F && layouts[0].bounds.y == 96.0F,
         "expected first material badge anchored to the thumbnail bottom-left");
@@ -660,7 +660,7 @@ void catalogMaterialBadgesAnchorBottomLeftAndOmitOverflow() {
 
     const auto constrained = stui::native::calculateCatalogMaterialBadgeLayouts(
         labels, 90.0F, 120.0F, 16.0F, 4.0F, 2.0F, 4.0F, 4.0F, 32.0F);
-    expect(constrained.size() == 1 && constrained.front().label == "Glow",
+    expect(constrained.size() == 1 && constrained.front().label == "光",
         "expected a narrow thumbnail to omit rather than clip overflow badges");
 
     const auto shortThumbnail = stui::native::calculateCatalogMaterialBadgeLayouts(
@@ -806,7 +806,7 @@ void editAppearanceUsesSessionStateForSaveAndThumbnailPresentation() {
                "textures/tattoos/edited_g.dds" &&
                stui::native::appearanceTextureMetadata(changedSession.bump) ==
                "textures/tattoos/edited_n.dds" &&
-               stui::native::appearanceTextureMetadata("") == "None",
+               stui::native::appearanceTextureMetadata("") == "无",
         "expected advanced texture metadata to remain read-only and show None when absent");
     auto textureSelectedSession = changedSession;
     textureSelectedSession.edited.glowTexture = "textures/tattoos/selected_g.dds";
@@ -844,7 +844,7 @@ void editAppearanceUsesSessionStateForSaveAndThumbnailPresentation() {
     const auto save = stui::native::appearanceSavePresentation(
         stui::native::SlotWorkflowScreen::editAppearance,
         &changedSession);
-    expect(save.label == "Save" && save.enabled,
+    expect(save.label == "存" && save.enabled,
         "expected full-update edits to present an enabled Save action");
     expect(stui::native::isAppearanceEditingEnabled(
                stui::native::SlotWorkflowScreen::editAppearance,
@@ -856,7 +856,7 @@ void editAppearanceUsesSessionStateForSaveAndThumbnailPresentation() {
     const auto retry = stui::native::appearanceSavePresentation(
         stui::native::SlotWorkflowScreen::editAppearance,
         &retrySession);
-    expect(retry.label == "Save" && retry.enabled,
+    expect(retry.label == "存" && retry.enabled,
         "expected Save label to stay separate from operation retry");
     expect(!stui::native::isAppearanceEditingEnabled(
                stui::native::SlotWorkflowScreen::editAppearance,
@@ -866,7 +866,7 @@ void editAppearanceUsesSessionStateForSaveAndThumbnailPresentation() {
     const auto savingRetry = stui::native::appearanceSavePresentation(
         stui::native::SlotWorkflowScreen::savingAppearance,
         &retrySession);
-    expect(savingRetry.label == "Save" && !savingRetry.enabled,
+    expect(savingRetry.label == "存" && !savingRetry.enabled,
         "expected saving appearance to disable duplicate Save");
 }
 
@@ -883,9 +883,9 @@ void editAppearanceLayoutHidesEmptyMetadataAndUsesExpandedRanges() {
     expect(!hidden.visible && selected.visible &&
             selected.currentLabel == "Soft glow" &&
             selected.widgetId == "##GlowTextureSelector" &&
-            unlisted.currentLabel == "Current (unlisted)" &&
+            unlisted.currentLabel == "当前(未列出)" &&
             unlisted.widgetId == "##BumpTextureSelector" &&
-            packDefault.currentLabel == "Pack default" &&
+            packDefault.currentLabel == "包默认" &&
             options[1].path == "marks/soft_g.dds",
         "expected controlled texture selector labels, exact paths, and stable IDs");
     expect(!shouldShowAppearanceTextureMetadata("") &&
@@ -919,12 +919,12 @@ void appearancePresetPresentationCoversEmptyLimitAndPendingStates() {
     expect(appearancePresetStatusMessage(AppearancePresetUiState::unavailable) ==
             "Unavailable" &&
             appearancePresetStatusMessage(AppearancePresetUiState::empty) ==
-                "No appearance presets saved." &&
+                "尚未保存外观预设。" &&
             appearancePresetStatusMessage(AppearancePresetUiState::ready).empty() &&
             appearancePresetStatusMessage(AppearancePresetUiState::limitReached) ==
-                "20 preset limit reached" &&
+                "已达20预设上限" &&
             appearancePresetStatusMessage(AppearancePresetUiState::pending) ==
-                "Updating appearance presets...",
+                "正在更新外观预设...",
         "expected deterministic preset status copy");
     expect(canCreateAppearancePreset(0, false) &&
             canCreateAppearancePreset(19, false) &&
@@ -1020,10 +1020,10 @@ void editAppearanceRendererOrchestrationOrdersInputAndCancel() {
 void livePreviewPresentationMatchesTransactionState() {
     using namespace stui::native;
     expect(livePreviewStatusLabel(LivePreviewStatus::clean).empty(), "clean has no status");
-    expect(livePreviewStatusLabel(LivePreviewStatus::pending) == "Preview pending...", "pending label");
-    expect(livePreviewStatusLabel(LivePreviewStatus::updating) == "Updating preview...", "updating label");
-    expect(livePreviewStatusLabel(LivePreviewStatus::applied) == "Preview applied", "applied label");
-    expect(livePreviewStatusLabel(LivePreviewStatus::restoring) == "Restoring original appearance...", "restore label");
+    expect(livePreviewStatusLabel(LivePreviewStatus::pending) == "预览待定...", "pending label");
+    expect(livePreviewStatusLabel(LivePreviewStatus::updating) == "更新预览中...", "updating label");
+    expect(livePreviewStatusLabel(LivePreviewStatus::applied) == "预览已应用", "applied label");
+    expect(livePreviewStatusLabel(LivePreviewStatus::restoring) == "正在恢复原始外观...", "restore label");
     expect(livePreviewStatusLabel(LivePreviewStatus::previewError).empty() &&
         livePreviewStatusLabel(LivePreviewStatus::restoreError).empty(), "errors use service messages");
     const auto absent = livePreviewPresentation(SlotWorkflowScreen::currentSlots, nullptr);
@@ -1045,8 +1045,8 @@ void livePreviewPresentationMatchesTransactionState() {
             session.mode = mode;
             const auto ui = livePreviewPresentation(SlotWorkflowScreen::editAppearance, &session);
             const auto expected = status == LivePreviewStatus::restoreError
-                ? (mode == stui::core::UpdateTattooAppearanceMode::synchronizeOnly ? "Retry Restore Sync" : "Retry Restore")
-                : (mode == stui::core::UpdateTattooAppearanceMode::synchronizeOnly ? "Retry Preview Sync" : "Retry Preview");
+                ? (mode == stui::core::UpdateTattooAppearanceMode::synchronizeOnly ? "重试恢复同步" : "重试恢复")
+                : (mode == stui::core::UpdateTattooAppearanceMode::synchronizeOnly ? "重试预览同步" : "重试预览");
             expect(ui.retry.visible && ui.retry.enabled && ui.retryLabel == expected && !ui.save.enabled,
                 "retry matches failed purpose and preserves sync-only mode");
             expect(ui.cancel.enabled == (status == LivePreviewStatus::previewError) &&
@@ -1318,7 +1318,7 @@ void classifiesEmptyCatalogSeparatelyFromNoMatches() {
     expect(emptyState == stui::native::CatalogBrowserEmptyState::emptyCatalog,
            "expected a valid zero-entry snapshot to be an empty catalog");
     expect(stui::native::catalogBrowserEmptyMessage(emptyState) ==
-               "The tattoo catalog is empty. Refresh the catalog to browse tattoos.",
+               "纹身目录为空。刷新目录以浏览纹身。",
            "expected explicit empty-catalog message");
 
     const stui::repository::TattooPage noMatches{
@@ -1331,7 +1331,7 @@ void classifiesEmptyCatalogSeparatelyFromNoMatches() {
     expect(noMatchState == stui::native::CatalogBrowserEmptyState::noMatches,
            "expected filtered zero matches from a non-empty catalog");
     expect(stui::native::catalogBrowserEmptyMessage(noMatchState) ==
-               "No tattoos match the current filters.",
+               "无纹身匹配当前筛选。",
            "expected explicit no-match message");
 
     expect(stui::native::classifyCatalogBrowserEmptyState(false, noMatches) ==
@@ -1343,41 +1343,41 @@ void classifiesEmptyCatalogSeparatelyFromNoMatches() {
     expect(noAppliedMatches == stui::native::CatalogBrowserEmptyState::noAppliedMatches,
            "expected Applied-only empty results to have a distinct state");
     expect(stui::native::catalogBrowserEmptyMessage(noAppliedMatches) ==
-               "No applied tattoos match the current filters.",
+               "无已应用纹身匹配当前筛选。",
            "expected Applied-only empty state guidance");
 
     const auto noFavoriteMatches =
         stui::native::classifyCatalogBrowserEmptyState(true, noMatches, false, true);
     expect(noFavoriteMatches == stui::native::CatalogBrowserEmptyState::noFavoriteMatches &&
             stui::native::catalogBrowserEmptyMessage(noFavoriteMatches) ==
-                "No favorite tattoos match the current filters.",
+                "无收藏纹身匹配当前筛选。",
         "expected Favorites-only empty state guidance");
     const auto noFavoriteAppliedMatches =
         stui::native::classifyCatalogBrowserEmptyState(true, noMatches, true, true);
     expect(noFavoriteAppliedMatches == stui::native::CatalogBrowserEmptyState::noFavoriteAppliedMatches &&
             stui::native::catalogBrowserEmptyMessage(noFavoriteAppliedMatches) ==
-                "No favorite applied tattoos match the current filters.",
+                "无收藏的已应用纹身匹配当前筛选。",
         "expected combined filter empty state guidance");
 
     const auto noRecentMatches =
         stui::native::classifyCatalogBrowserEmptyState(true, noMatches, false, false, true);
     expect(stui::native::catalogBrowserEmptyMessage(noRecentMatches) ==
-            "No recently used tattoos match the current filters.",
+            "无最近使用纹身匹配当前筛选。",
         "expected Recently Used empty state guidance");
     const auto noFavoriteRecentMatches =
         stui::native::classifyCatalogBrowserEmptyState(true, noMatches, false, true, true);
     expect(stui::native::catalogBrowserEmptyMessage(noFavoriteRecentMatches) ==
-            "No favorite recently used tattoos match the current filters.",
+            "无收藏的最近使用纹身匹配当前筛选。",
         "expected Favorites and Recently Used empty state guidance");
     const auto noAppliedRecentMatches =
         stui::native::classifyCatalogBrowserEmptyState(true, noMatches, true, false, true);
     expect(stui::native::catalogBrowserEmptyMessage(noAppliedRecentMatches) ==
-            "No applied recently used tattoos match the current filters.",
+            "无已应用的最近使用纹身匹配当前筛选。",
         "expected Applied and Recently Used empty state guidance");
     const auto noFavoriteAppliedRecentMatches =
         stui::native::classifyCatalogBrowserEmptyState(true, noMatches, true, true, true);
     expect(stui::native::catalogBrowserEmptyMessage(noFavoriteAppliedRecentMatches) ==
-            "No favorite applied recently used tattoos match the current filters.",
+            "无收藏的已应用最近使用纹身匹配当前筛选。",
         "expected combined Recently Used empty state guidance");
 }
 
@@ -1454,59 +1454,59 @@ void workflowBreadcrumbTracksEveryScreenAndConfirmation() {
     using stui::native::TattooLoadoutScreen;
     using stui::native::workflowBreadcrumb;
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots, TattooLoadoutScreen::none) ==
-               "Current Slots",
+               "当前槽位",
         "slots breadcrumb should identify the root");
     expect(workflowBreadcrumb(SlotWorkflowScreen::picker, TattooLoadoutScreen::none) ==
-               "Current Slots / Browse",
+               "当前槽位 / 浏览",
         "browse breadcrumb should retain its parent");
     expect(workflowBreadcrumb(SlotWorkflowScreen::preview, TattooLoadoutScreen::none) ==
-               "Current Slots / Browse / Preview",
+               "当前槽位 / 浏览 / 预览",
         "preview breadcrumb should show the selection path");
     expect(workflowBreadcrumb(SlotWorkflowScreen::applying, TattooLoadoutScreen::none) ==
-               "Current Slots / Browse / Preview",
+               "当前槽位 / 浏览 / 预览",
         "apply progress should keep preview context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::slotActions, TattooLoadoutScreen::none) ==
-               "Current Slots / Slot Actions",
+               "当前槽位 / 槽位操作",
         "slot actions breadcrumb should identify the selected slot screen");
     expect(workflowBreadcrumb(SlotWorkflowScreen::editAppearance, TattooLoadoutScreen::none) ==
-               "Current Slots / Edit Appearance",
+               "当前槽位 / 编辑外观",
         "appearance breadcrumb should identify the editor");
     expect(workflowBreadcrumb(SlotWorkflowScreen::savingAppearance, TattooLoadoutScreen::none) ==
-               "Current Slots / Edit Appearance",
+               "当前槽位 / 编辑外观",
         "save progress should keep editor context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::removeConfirmation, TattooLoadoutScreen::none) ==
-               "Current Slots / Slot Actions / Confirm Remove",
+               "当前槽位 / 槽位操作 / 确认移除",
         "removal confirmation must remain distinct");
     expect(workflowBreadcrumb(SlotWorkflowScreen::removing, TattooLoadoutScreen::none) ==
-               "Current Slots / Slot Actions / Confirm Remove",
+               "当前槽位 / 槽位操作 / 确认移除",
         "removal progress should keep confirmation context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::captureSummary) ==
-               "Current Slots / Loadouts",
+               "当前槽位 / 配置",
         "loadout capture should stay in loadout context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::manage) ==
-               "Current Slots / Loadouts",
+               "当前槽位 / 配置",
         "loadout management should stay in loadout context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::preview) ==
-               "Current Slots / Loadouts / Preview",
+               "当前槽位 / 配置 / 预览",
         "loadout preview should be distinct from tattoo preview");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::restoring) ==
-               "Current Slots / Loadouts / Restore",
+               "当前槽位 / 配置 / 恢复",
         "loadout restore progress should retain context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::result) ==
-               "Current Slots / Loadouts / Restore",
+               "当前槽位 / 配置 / 恢复",
         "loadout result should retain restore context");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::overwriteConfirmation) ==
-               "Current Slots / Loadouts / Confirm Overwrite",
+               "当前槽位 / 配置 / 确认覆盖",
         "overwrite confirmation must remain distinct");
     expect(workflowBreadcrumb(SlotWorkflowScreen::currentSlots,
                TattooLoadoutScreen::deleteConfirmation) ==
-               "Current Slots / Loadouts / Confirm Delete",
+               "当前槽位 / 配置 / 确认删除",
         "loadout confirmation must remain distinct");
 }
 
@@ -1528,13 +1528,13 @@ void slotPaginationClampsToSixCardPages() {
 }
 
 void slotAreaLabelsMatchSlaveTatsAreaNames() {
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::body) == "BODY",
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::body) == "身",
         "expected BODY tab label");
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::face) == "FACE",
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::face) == "脸",
         "expected FACE tab label");
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::hands) == "HANDS",
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::hands) == "手",
         "expected HANDS tab label");
-    expect(stui::native::slotAreaLabel(stui::core::TattooArea::feet) == "FEET",
+    expect(stui::native::slotAreaLabel(stui::core::TattooArea::feet) == "足",
         "expected FEET tab label");
 }
 
@@ -1651,12 +1651,12 @@ void domainOptionsStartWithAllDomains() {
 
 void lockActionPresentationKeepsAppearanceEditable() {
     const auto unlocked = stui::native::slotLockActionPresentation(false);
-    expect(unlocked.iconCodepoint == 0xF09C && unlocked.tooltip == "Lock tattoo" &&
+    expect(unlocked.iconCodepoint == 0xF09C && unlocked.tooltip == "锁纹身" &&
             unlocked.mutationsEnabled,
         "expected unlocked slot to offer the Font Awesome unlock icon and Lock action");
 
     const auto locked = stui::native::slotLockActionPresentation(true);
-    expect(locked.iconCodepoint == 0xF023 && locked.tooltip == "Unlock tattoo" &&
+    expect(locked.iconCodepoint == 0xF023 && locked.tooltip == "解锁纹身" &&
             !locked.mutationsEnabled,
         "expected locked slot to offer the Font Awesome lock icon and Unlock action");
 }

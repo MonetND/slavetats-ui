@@ -1,4 +1,4 @@
-#include "native/NativeSlotWorkflowRuntime.h"
+﻿#include "native/NativeSlotWorkflowRuntime.h"
 
 #include <chrono>
 #include <expected>
@@ -1165,7 +1165,7 @@ void resolverExceptionFailsWithoutFallbackAndAllowsRefresh() {
     expect(!fixture.model.isActorTargetResolutionInFlight() &&
             !fixture.model.actorTarget() && fixture.model.error() &&
             fixture.model.error()->code == ServiceErrorCode::actorNotFound &&
-            fixture.model.error()->message == "Failed to resolve crosshair Actor.",
+            fixture.model.error()->message == "无法解析准星角色。",
         "expected resolver exception delivered as stable actorNotFound error");
     fixture.runtime.pump();
     expect(fixture.scheduled.size() == 1 && fixture.queryCount == 0 &&
@@ -1189,7 +1189,7 @@ void schedulerExceptionFailsWithoutFallbackAndAllowsRefresh() {
     expect(!fixture.model.isActorTargetResolutionInFlight() &&
             !fixture.model.actorTarget() && fixture.model.error() &&
             fixture.model.error()->code == ServiceErrorCode::actorNotFound &&
-            fixture.model.error()->message == "Failed to resolve crosshair Actor.",
+            fixture.model.error()->message == "无法解析准星角色。",
         "expected scheduler exception delivered as stable actorNotFound error");
     fixture.runtime.pump();
     expect(fixture.scheduled.empty() && fixture.targetResolutionCount == 0 &&
@@ -1208,14 +1208,14 @@ void deliversResolverFailureWithoutReplacingItsError() {
     Fixture fixture;
     fixture.model.start();
     fixture.targetResult = std::unexpected(stui::core::ServiceError{
-        .code = ServiceErrorCode::actorNotFound, .message = "No valid crosshair Actor"});
+        .code = ServiceErrorCode::actorNotFound, .message = "无有效准星角色"});
     expect(fixture.model.selectCrosshairTarget(), "expected Crosshair selection");
     fixture.runtime.pump();
     expect(fixture.scheduled.size() == 1, "expected scheduled resolver");
     fixture.scheduled.front()();
     fixture.runtime.pump();
     expect(!fixture.model.actorTarget() && fixture.model.error() &&
-            fixture.model.error()->message == "No valid crosshair Actor" &&
+            fixture.model.error()->message == "无有效准星角色" &&
             fixture.queryCount == 0 && fixture.scheduled.size() == 1,
         "expected typed provider failure preserved without fallback query");
 }

@@ -1,4 +1,4 @@
-#include "core/SlaveTatsService.h"
+﻿#include "core/SlaveTatsService.h"
 
 #include <cmath>
 #include <optional>
@@ -83,7 +83,7 @@ TattooSlotsResult SlaveTatsService::querySlots(std::uint32_t actorFormId, Tattoo
     if (actorFormId == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -104,7 +104,7 @@ CatalogPreviewBeginResult SlaveTatsService::beginCatalogPreview(
     if (!m_runtime.jContainersReady()) return std::unexpected(ServiceError{
         ServiceErrorCode::jContainersUnavailable, "JContainers not ready"});
     if (!request.actorFormId) return std::unexpected(ServiceError{
-        ServiceErrorCode::actorNotFound, "Actor not found"});
+        ServiceErrorCode::actorNotFound, "未找到角色"});
     if (!isValidArea(request.area)) return std::unexpected(ServiceError{
         ServiceErrorCode::invalidArea, "Invalid tattoo area"});
     if (request.slot < 0) return std::unexpected(ServiceError{
@@ -115,9 +115,9 @@ CatalogPreviewBeginResult SlaveTatsService::beginCatalogPreview(
 CatalogPreviewPaintResult SlaveTatsService::paintCatalogPreview(
     const CatalogPreviewPaintRequest& request) {
     if (!request.sessionId) return std::unexpected(ServiceError{
-        ServiceErrorCode::previewUnavailable, "Catalog preview session is unavailable"});
+        ServiceErrorCode::previewUnavailable, "目录预览会话不可用"});
     if (!request.context.actorFormId) return std::unexpected(ServiceError{
-        ServiceErrorCode::actorNotFound, "Actor not found"});
+        ServiceErrorCode::actorNotFound, "未找到角色"});
     if (!isValidArea(request.context.area)) return std::unexpected(ServiceError{
         ServiceErrorCode::invalidArea, "Invalid tattoo area"});
     if (request.context.slot < 0) return std::unexpected(ServiceError{
@@ -138,7 +138,7 @@ CatalogPreviewPaintResult SlaveTatsService::paintCatalogPreview(
         !std::isfinite(request.candidate->emissiveMult) ||
         request.candidate->emissiveMult < 0.0F)) {
         return std::unexpected(ServiceError{ServiceErrorCode::previewFailed,
-            "Invalid catalog preview appearance"});
+            "无效目录预览外观"});
     }
     return m_runtime.paintCatalogPreview(request);
 }
@@ -146,9 +146,9 @@ CatalogPreviewPaintResult SlaveTatsService::paintCatalogPreview(
 CatalogPreviewRestoreResult SlaveTatsService::restoreCatalogPreview(
     const CatalogPreviewRestoreRequest& request) {
     if (!request.sessionId) return std::unexpected(ServiceError{
-        ServiceErrorCode::previewUnavailable, "Catalog preview session is unavailable"});
+        ServiceErrorCode::previewUnavailable, "目录预览会话不可用"});
     if (!request.context.actorFormId) return std::unexpected(ServiceError{
-        ServiceErrorCode::actorNotFound, "Actor not found"});
+        ServiceErrorCode::actorNotFound, "未找到角色"});
     if (!isValidArea(request.context.area)) return std::unexpected(ServiceError{
         ServiceErrorCode::invalidArea, "Invalid tattoo area"});
     if (request.context.slot < 0) return std::unexpected(ServiceError{
@@ -163,19 +163,19 @@ CatalogPreviewCommitResult SlaveTatsService::commitCatalogPreview(
     if (!m_runtime.jContainersReady()) return std::unexpected(ServiceError{
         ServiceErrorCode::jContainersUnavailable, "JContainers not ready"});
     if (!request.sessionId) return std::unexpected(ServiceError{
-        ServiceErrorCode::previewUnavailable, "Catalog preview session is unavailable"});
+        ServiceErrorCode::previewUnavailable, "目录预览会话不可用"});
     if (!request.context.actorFormId ||
         request.apply.actorFormId != request.context.actorFormId) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::actorNotFound, "Catalog preview Actor does not match Save"});
+            ServiceErrorCode::actorNotFound, "目录预览角色与保存不匹配"});
     }
     if (!isValidArea(request.context.area) || request.apply.area != request.context.area) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::invalidArea, "Catalog preview area does not match Save"});
+            ServiceErrorCode::invalidArea, "目录预览区域与保存不匹配"});
     }
     if (request.context.slot < 0 || request.apply.slot != request.context.slot) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::invalidSlot, "Catalog preview slot does not match Save"});
+            ServiceErrorCode::invalidSlot, "目录预览槽位与保存不匹配"});
     }
     if (request.apply.section.empty() || request.apply.name.empty()) {
         return std::unexpected(ServiceError{
@@ -186,7 +186,7 @@ CatalogPreviewCommitResult SlaveTatsService::commitCatalogPreview(
             !std::isfinite(request.apply.alpha) || request.apply.alpha < 0.0F ||
             request.apply.alpha > 1.0F) {
             return std::unexpected(ServiceError{
-                ServiceErrorCode::applyFailed, "Invalid catalog preview appearance"});
+                ServiceErrorCode::applyFailed, "无效目录预览外观"});
         }
         if (request.apply.appearance) {
             const auto& a = *request.apply.appearance;
@@ -197,7 +197,7 @@ CatalogPreviewCommitResult SlaveTatsService::commitCatalogPreview(
                 invalidStrength(a.glossiness) || invalidStrength(a.specularStrength) ||
                 invalidStrength(a.emissiveMult)) {
                 return std::unexpected(ServiceError{
-                    ServiceErrorCode::applyFailed, "Invalid advanced catalog preview appearance"});
+                    ServiceErrorCode::applyFailed, "无效高级目录预览外观"});
             }
         }
     }
@@ -222,7 +222,7 @@ ApplyTattooResult SlaveTatsService::applyToSlot(const ApplyTattooRequest& reques
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -254,7 +254,7 @@ ApplyTattooResult SlaveTatsService::applyToSlot(const ApplyTattooRequest& reques
     if (!(request.alpha >= 0.0F && request.alpha <= 1.0F)) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::applyFailed,
-            "Tattoo alpha must be between 0 and 1",
+            "纹身透明度须在0到1之间",
         });
     }
 
@@ -267,7 +267,7 @@ ApplyTattooResult SlaveTatsService::applyToSlot(const ApplyTattooRequest& reques
             invalidStrength(a.glossiness) || invalidStrength(a.specularStrength) ||
             invalidStrength(a.emissiveMult)) {
             return std::unexpected(ServiceError{
-                ServiceErrorCode::applyFailed, "Invalid advanced tattoo appearance"});
+                ServiceErrorCode::applyFailed, "无效高级纹身外观"});
         }
     }
     return m_runtime.applyToSlot(request);
@@ -291,7 +291,7 @@ RemoveTattooResult SlaveTatsService::removeFromSlot(const RemoveTattooRequest& r
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -331,7 +331,7 @@ UpdateTattooAppearanceResult SlaveTatsService::updateAppearance(
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -339,7 +339,7 @@ UpdateTattooAppearanceResult SlaveTatsService::updateAppearance(
         request.runtimeHandle == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::staleTattooHandle,
-            "Tattoo handle is invalid; refresh the slot snapshot and try again",
+            "纹身手柄无效；请刷新槽位快照后重试",
         });
     }
 
@@ -347,42 +347,42 @@ UpdateTattooAppearanceResult SlaveTatsService::updateAppearance(
         if (request.color < 0 || request.color > 0xFFFFFF) {
             return std::unexpected(ServiceError{
                 ServiceErrorCode::updateFailed,
-                "Tattoo color must be between 0 and 0xFFFFFF",
+                "纹身颜色须在0到0xFFFFFF之间",
             });
         }
 
         if (!std::isfinite(request.alpha) || request.alpha < 0.0F || request.alpha > 1.0F) {
             return std::unexpected(ServiceError{
                 ServiceErrorCode::updateFailed,
-                "Tattoo alpha must be between 0 and 1",
+                "纹身透明度须在0到1之间",
             });
         }
 
         if (request.glow < 0 || request.glow > 0xFFFFFF) {
             return std::unexpected(ServiceError{
                 ServiceErrorCode::updateFailed,
-                "Tattoo glow must be between 0 and 0xFFFFFF",
+                "纹身发光须在0到0xFFFFFF之间",
             });
         }
 
         if (!std::isfinite(request.glossiness) || request.glossiness < 0.0F) {
             return std::unexpected(ServiceError{
                 ServiceErrorCode::updateFailed,
-                "Tattoo glossiness must be finite and non-negative",
+                "纹身光泽须为有限非负数",
             });
         }
 
         if (!std::isfinite(request.specularStrength) || request.specularStrength < 0.0F) {
             return std::unexpected(ServiceError{
                 ServiceErrorCode::updateFailed,
-                "Tattoo specular strength must be finite and non-negative",
+                "纹身高光强度须为有限非负数",
             });
         }
 
         if (!std::isfinite(request.emissiveMult) || request.emissiveMult < 0.0F) {
             return std::unexpected(ServiceError{
                 ServiceErrorCode::updateFailed,
-                "Tattoo emissive multiplier must be finite and non-negative",
+                "纹身自发光倍数须为有限非负数",
             });
         }
     }
@@ -409,14 +409,14 @@ SetTattooLockedResult SlaveTatsService::setTattooLocked(
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
     if (request.runtimeHandle == 0) {
         return std::unexpected(ServiceError{
             ServiceErrorCode::staleTattooHandle,
-            "Tattoo handle is invalid; refresh the slot snapshot and try again",
+            "纹身手柄无效；请刷新槽位快照后重试",
         });
     }
 
@@ -435,7 +435,7 @@ CaptureTattooLoadoutResult SlaveTatsService::captureLoadout(
     }
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::actorNotFound, "Actor not found"});
+            ServiceErrorCode::actorNotFound, "未找到角色"});
     }
     return m_runtime.captureLoadout(request);
 }
@@ -452,7 +452,7 @@ PreviewTattooLoadoutResult SlaveTatsService::previewLoadout(
     }
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::actorNotFound, "Actor not found"});
+            ServiceErrorCode::actorNotFound, "未找到角色"});
     }
     if (auto invalid = validateLoadoutValue(request.loadout)) {
         return std::unexpected(std::move(*invalid));
@@ -472,7 +472,7 @@ RestoreTattooLoadoutResult SlaveTatsService::restoreLoadout(
     }
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::actorNotFound, "Actor not found"});
+            ServiceErrorCode::actorNotFound, "未找到角色"});
     }
     if (auto invalid = validateLoadoutValue(request.loadout)) {
         return std::unexpected(std::move(*invalid));
@@ -492,11 +492,11 @@ RestoreTattooLoadoutResult SlaveTatsService::retryLoadoutSynchronization(
     }
     if (request.actorFormId == 0) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::actorNotFound, "Actor not found"});
+            ServiceErrorCode::actorNotFound, "未找到角色"});
     }
     if (request.retryId == 0) {
         return std::unexpected(ServiceError{
-            ServiceErrorCode::synchronizeFailed, "Tattoo loadout retry is invalid"});
+            ServiceErrorCode::synchronizeFailed, "纹身配置重试无效"});
     }
     return m_runtime.retryLoadoutSynchronization(request);
 }

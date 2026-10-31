@@ -1,4 +1,4 @@
-#include "runtime/AppearancePresetStore.h"
+﻿#include "runtime/AppearancePresetStore.h"
 
 #include <algorithm>
 #include <array>
@@ -60,7 +60,7 @@ bool validBoundedFloat(const float value, const float maximum) {
 std::optional<ConfigError> validatePreset(AppearancePreset& preset) {
     preset.name = trimName(std::move(preset.name));
     if (preset.name.empty()) {
-        return error("Appearance preset name must not be empty.");
+        return error("外观预设名不能为空。");
     }
     if (preset.color > kMaximumColor || preset.glow > kMaximumColor) {
         return error("Appearance preset colors must be between 0 and 0xFFFFFF.");
@@ -219,10 +219,10 @@ AppearancePresetResult AppearancePresetStore::create(AppearancePreset preset) {
             return std::unexpected(presets.error());
         }
         if (findPreset(*presets, preset.name) != presets->end()) {
-            return std::unexpected(error("Appearance preset name already exists."));
+            return std::unexpected(error("外观预设名已存在。"));
         }
         if (presets->size() >= kAppearancePresetLimit) {
-            return std::unexpected(error("Appearance preset limit reached."));
+            return std::unexpected(error("已达外观预设上限。"));
         }
         presets->push_back(preset);
         storePresets(config, *presets);
@@ -272,7 +272,7 @@ AppearancePresetResult AppearancePresetStore::rename(
     }
     newName = trimName(std::move(newName));
     if (newName.empty()) {
-        return std::unexpected(error("Appearance preset name must not be empty."));
+        return std::unexpected(error("外观预设名不能为空。"));
     }
 
     AppearancePresetList committed;
@@ -287,7 +287,7 @@ AppearancePresetResult AppearancePresetStore::rename(
         }
         const auto collision = findPreset(*presets, newName);
         if (collision != presets->end() && collision != found) {
-            return std::unexpected(error("Appearance preset name already exists."));
+            return std::unexpected(error("外观预设名已存在。"));
         }
         found->name = std::move(newName);
         storePresets(config, *presets);

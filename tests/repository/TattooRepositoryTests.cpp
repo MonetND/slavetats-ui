@@ -1,4 +1,4 @@
-#include "repository/TattooRepository.h"
+﻿#include "repository/TattooRepository.h"
 #include "repository/TattooMaterialClassification.h"
 
 #include <algorithm>
@@ -70,7 +70,7 @@ void ordersDefinitionsDeterministicallyAndPreservesMetadata() {
     const auto reversedPage = reversedRepository.query();
 
     expect(page.entries.size() == 3, "expected all definitions");
-    expect(page.entries[0].name == "Alpha", "expected folded pack/name ordering");
+    expect(page.entries[0].name == "透", "expected folded pack/name ordering");
     expect(page.entries[1].name == "Beta", "expected stable order within pack");
     expect(page.entries[2].name == "Zulu", "expected later pack last");
     expect(page.entries[0].sourceId == "a.json" && page.entries[0].sourceIndex == 4,
@@ -184,7 +184,7 @@ void emptyMatchResetsPaging() {
 
 void buildsStableSourceAwareFacets() {
     TattooRepository repository({
-        definition("b.json", "Same Pack", "Marks", "B", "b.dds", "BODY"),
+        definition("b.json", "Same Pack", "Marks", "B", "b.dds", "身"),
         definition("a.json", "Same Pack", "marks", "A", "a.dds", "Body"),
         definition("c.json", "Other", "Runes", "C", "c.dds", "Face"),
     });
@@ -333,7 +333,7 @@ void materialFiltersComposeWithAndSemanticsAndContextualFacets() {
 }
 
 void contextualFacetsFollowAreaThenSource() {
-    auto customBody = definition("body-b.json", "Body B", "Runes", "B", "b.dds", "BODY");
+    auto customBody = definition("body-b.json", "Body B", "Runes", "B", "b.dds", "身");
     customBody.domain = "custom";
     TattooRepository repository({
         definition("body-a.json", "Body A", "Marks", "A", "a.dds", "Body"),
@@ -461,7 +461,7 @@ void recentIdentityFilterUsesExactAreaAndNewestFirstOrder() {
 
     expect(ordered.matchedEntries == 2 && ordered.entries.front().name == "Beta",
         "expected newest exact recent identity before pagination");
-    expect(second.entries.front().name == "Alpha",
+    expect(second.entries.front().name == "透",
         "expected older recent identity on the next page");
     expect(empty.matchedEntries == 0,
         "expected area-scoped history not to match another area");

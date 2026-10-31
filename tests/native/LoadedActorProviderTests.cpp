@@ -1,4 +1,4 @@
-#include "native/LoadedActorProvider.h"
+﻿#include "native/LoadedActorProvider.h"
 
 #include <algorithm>
 #include <iostream>
@@ -72,7 +72,7 @@ void rejectsPlayerInvalidIdentityAndDistance() {
     });
 
     expect(result.size() == 2 && result[0].target.formId == 0x23 &&
-            result[0].target.displayName == "Unnamed Actor" &&
+            result[0].target.displayName == "无名角色" &&
             result[1].target.formId == 0x22,
         "expected only valid explicit NPC candidates with normalized names");
 }

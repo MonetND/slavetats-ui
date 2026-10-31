@@ -1,4 +1,4 @@
-#include "native/OfficialMenuFrameworkAdapter.h"
+﻿#include "native/OfficialMenuFrameworkAdapter.h"
 #include "runtime/HotkeyBinding.h"
 
 #include <RE/Skyrim.h>
@@ -26,9 +26,9 @@ runtime::MenuSide g_renderMenuSide = runtime::MenuSide::left;
 }
 
 std::string_view loadoutStatusMessage(std::size_t count, bool pending) noexcept {
-    if (pending) return "Saving or loading loadouts...";
-    if (count == 0) return "No loadouts saved.";
-    if (count >= core::kTattooLoadoutLimit) return "Loadout limit reached. Overwrite, rename or delete an existing loadout.";
+    if (pending) return "保存或载入配置...";
+    if (count == 0) return "无已存配置。";
+    if (count >= core::kTattooLoadoutLimit) return "已达配置上限。请覆盖、改名或删除现有配置。";
     return {};
 }
 bool canCreateLoadout(std::size_t count, bool pending) noexcept {
@@ -46,26 +46,26 @@ std::array<std::size_t, 4> loadoutCaptureCounts(const core::TattooLoadoutCapture
 }
 std::string_view loadoutResultLabel(core::TattooLoadoutRestoreState state) noexcept {
     switch (state) {
-    case core::TattooLoadoutRestoreState::success: return "Loadout applied";
-    case core::TattooLoadoutRestoreState::preflightRejected: return "Preflight rejected";
-    case core::TattooLoadoutRestoreState::forwardSynchronizationPending: return "Synchronization pending";
-    case core::TattooLoadoutRestoreState::rollbackSynchronizationPending: return "Rollback synchronization pending";
-    case core::TattooLoadoutRestoreState::rollbackComplete: return "Rollback complete";
-    case core::TattooLoadoutRestoreState::rollbackIncomplete: return "Rollback incomplete";
+    case core::TattooLoadoutRestoreState::success: return "配置已应用";
+    case core::TattooLoadoutRestoreState::preflightRejected: return "预检被拒绝";
+    case core::TattooLoadoutRestoreState::forwardSynchronizationPending: return "同步待定";
+    case core::TattooLoadoutRestoreState::rollbackSynchronizationPending: return "回滚同步待定";
+    case core::TattooLoadoutRestoreState::rollbackComplete: return "回滚完成";
+    case core::TattooLoadoutRestoreState::rollbackIncomplete: return "回滚不完整";
     }
-    return "Loadout failed";
+    return "配置失败";
 }
 std::string formatLoadoutSlotReason(core::TattooArea area, std::int32_t slot, std::string_view reason) {
     return slot < 0 ? std::format("{}: {}", slotAreaLabel(area), reason)
-        : std::format("{} / Slot {}: {}", slotAreaLabel(area), slot, reason);
+        : std::format("{} / 槽 {}: {}", slotAreaLabel(area), slot, reason);
 }
 LoadoutFooterPresentation loadoutFooterPresentation(TattooLoadoutScreen screen, bool primaryEnabled) noexcept {
     if (screen == TattooLoadoutScreen::restoring) return {};
     if (screen == TattooLoadoutScreen::result) return {.back = true, .close = true};
-    const auto primary = screen == TattooLoadoutScreen::preview ? "Apply Loadout"
-        : screen == TattooLoadoutScreen::manage ? "Rename"
-        : screen == TattooLoadoutScreen::overwriteConfirmation ? "Overwrite"
-        : screen == TattooLoadoutScreen::deleteConfirmation ? "Delete" : "Save Loadout";
+    const auto primary = screen == TattooLoadoutScreen::preview ? "应用配置"
+        : screen == TattooLoadoutScreen::manage ? "改名"
+        : screen == TattooLoadoutScreen::overwriteConfirmation ? "覆盖"
+        : screen == TattooLoadoutScreen::deleteConfirmation ? "删除" : "保存配置";
     return {.back = true, .cancel = true,
         .primary = primary,
         .primaryEnabled = primaryEnabled};
@@ -188,45 +188,45 @@ OfficialMenuFrameworkAdapter::OfficialMenuFrameworkAdapter(MenuFrameworkBindings
 
 std::string formatActorTargetIdentity(const ActorTarget& target) {
     return std::format("{} [0x{:08X}]",
-        target.displayName.empty() ? "Unnamed Actor" : target.displayName,
+        target.displayName.empty() ? "无名角色" : target.displayName,
         target.formId);
 }
 
 std::string formatNearbyActorSelectorLabel(
     const NearbyActorCandidate& candidate, std::size_t index) {
-    return std::format("{} - {:.0f} units##NearbyActor{}",
+    return std::format("{} - {:.0f}米##NearbyActor{}",
         formatActorTargetIdentity(candidate.target), candidate.distance, index);
 }
 
 std::string formatLoadedActorSelectorLabel(
     const LoadedActorCandidate& candidate, std::size_t index) {
-    return std::format("{} - {:.0f} units##ExplicitNpc{}",
+    return std::format("{} - {:.0f}米##ExplicitNpc{}",
         formatActorTargetIdentity(candidate.target), candidate.distance, index);
 }
 
 std::string_view actorPickerTitle(ActorPickerMode mode) noexcept {
-    return mode == ActorPickerMode::followers ? "Choose Follower" : "Choose NPC";
+    return mode == ActorPickerMode::followers ? "选择随从" : "选择NPC";
 }
 
 std::string_view loadedActorPickerStatusMessage(
     ActorPickerMode mode, bool resolving, bool hasResults,
     const core::ServiceError* error) noexcept {
-    if (resolving) return "Scanning loaded Actors...";
+    if (resolving) return "扫描已载入角色...";
     if (error) return error->message;
     if (hasResults) return "";
     return mode == ActorPickerMode::followers
-        ? "No loaded followers found." : "No loaded NPC matches the search.";
+        ? "无已载入随从。" : "无已载入NPC匹配搜索。";
 }
 
 std::string actorTargetTitle(const ActorTarget* target) {
     if (!target) {
-        return "Target: None";
+        return "目标: 无";
     }
-    return "Target: " + formatActorTargetIdentity(*target);
+    return "目标: " + formatActorTargetIdentity(*target);
 }
 
 std::string_view actorTargetStatusLabel(bool resolving, const ActorTarget* target) noexcept {
-    return resolving ? "Scanning nearby Actors..." : target ? "" : "No nearby Actor found";
+    return resolving ? "扫描附近角色..." : target ? "" : "未找到附近角色";
 }
 
 bool actorTargetActionsEnabled(bool resolving, const ActorTarget* target) noexcept {
@@ -287,7 +287,7 @@ std::string_view slotCardStatusLabel(core::SlotOccupancy occupancy) noexcept {
     case core::SlotOccupancy::slaveTats: return "";
     case core::SlotOccupancy::external: return "";
     }
-    return "Unavailable";
+    return "不可用";
 }
 
 std::optional<core::TattooArea> SlotAreaTabSelectionState::synchronize(
@@ -311,34 +311,34 @@ std::string_view workflowBreadcrumb(
     switch (loadoutScreen) {
     case TattooLoadoutScreen::captureSummary:
     case TattooLoadoutScreen::manage:
-        return "Current Slots / Loadouts";
+        return "当前槽位 / 配置";
     case TattooLoadoutScreen::preview:
-        return "Current Slots / Loadouts / Preview";
+        return "当前槽位 / 配置 / 预览";
     case TattooLoadoutScreen::restoring:
     case TattooLoadoutScreen::result:
-        return "Current Slots / Loadouts / Restore";
+        return "当前槽位 / 配置 / 恢复";
     case TattooLoadoutScreen::overwriteConfirmation:
-        return "Current Slots / Loadouts / Confirm Overwrite";
+        return "当前槽位 / 配置 / 确认覆盖";
     case TattooLoadoutScreen::deleteConfirmation:
-        return "Current Slots / Loadouts / Confirm Delete";
+        return "当前槽位 / 配置 / 确认删除";
     case TattooLoadoutScreen::none:
         break;
     }
     switch (screen) {
-    case SlotWorkflowScreen::currentSlots: return "Current Slots";
-    case SlotWorkflowScreen::slotActions: return "Current Slots / Slot Actions";
-    case SlotWorkflowScreen::picker: return "Current Slots / Browse";
+    case SlotWorkflowScreen::currentSlots: return "当前槽位";
+    case SlotWorkflowScreen::slotActions: return "当前槽位 / 槽位操作";
+    case SlotWorkflowScreen::picker: return "当前槽位 / 浏览";
     case SlotWorkflowScreen::preview:
     case SlotWorkflowScreen::applying:
-        return "Current Slots / Browse / Preview";
+        return "当前槽位 / 浏览 / 预览";
     case SlotWorkflowScreen::editAppearance:
     case SlotWorkflowScreen::savingAppearance:
-        return "Current Slots / Edit Appearance";
+        return "当前槽位 / 编辑外观";
     case SlotWorkflowScreen::removeConfirmation:
     case SlotWorkflowScreen::removing:
-        return "Current Slots / Slot Actions / Confirm Remove";
+        return "当前槽位 / 槽位操作 / 确认移除";
     }
-    return "Current Slots";
+    return "当前槽位";
 }
 
 SlotPageRange calculateSlotPage(
@@ -364,15 +364,15 @@ SlotPageRange calculateSlotPage(
 std::string_view slotAreaLabel(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:
-        return "BODY";
+        return "身";
     case core::TattooArea::face:
-        return "FACE";
+        return "脸";
     case core::TattooArea::hands:
-        return "HANDS";
+        return "手";
     case core::TattooArea::feet:
-        return "FEET";
+        return "足";
     }
-    return "BODY";
+    return "身";
 }
 
 std::vector<std::string> collectVisibleSlotTexturePaths(
@@ -394,13 +394,13 @@ std::vector<std::string> collectVisibleSlotTexturePaths(
 
 std::string formatSlotTargetLabel(
     const ActorTarget* actor, core::TattooArea area, std::int32_t slot) {
-    const std::string_view name = !actor ? "No active Actor" :
-        actor->displayName.empty() ? "Unnamed Actor" : std::string_view(actor->displayName);
-    return std::format("{} / {} / Slot {}", name, slotAreaLabel(area), slot);
+    const std::string_view name = !actor ? "无活动角色" :
+        actor->displayName.empty() ? "无名角色" : std::string_view(actor->displayName);
+    return std::format("{} / {} / 槽 {}", name, slotAreaLabel(area), slot);
 }
 
 std::string previewApplyButtonLabel(std::int32_t slot, bool retry) {
-    return std::string(retry ? "Retry Slot " : "Apply to Slot ") +
+    return std::string(retry ? "重试槽 " : "应用到槽 ") +
         std::to_string(slot);
 }
 
@@ -432,17 +432,17 @@ AppearanceSavePresentation appearanceSavePresentation(
     SlotWorkflowScreen screen,
     const AppearanceEditSession* session) noexcept {
     return {
-        .label = "Save",
+        .label = "存",
         .enabled = isAppearanceSaveEnabled(screen, session),
     };
 }
 
 std::string_view livePreviewStatusLabel(LivePreviewStatus status) noexcept {
     switch (status) {
-    case LivePreviewStatus::pending: return "Preview pending...";
-    case LivePreviewStatus::updating: return "Updating preview...";
-    case LivePreviewStatus::applied: return "Preview applied";
-    case LivePreviewStatus::restoring: return "Restoring original appearance...";
+    case LivePreviewStatus::pending: return "预览待定...";
+    case LivePreviewStatus::updating: return "更新预览中...";
+    case LivePreviewStatus::applied: return "预览已应用";
+    case LivePreviewStatus::restoring: return "正在恢复原始外观...";
     default: return {};
     }
 }
@@ -476,8 +476,8 @@ LivePreviewPresentation livePreviewPresentation(
     if (failed) {
         const bool sync = session->mode == core::UpdateTattooAppearanceMode::synchronizeOnly;
         retryLabel = session->status == LivePreviewStatus::restoreError
-            ? (sync ? "Retry Restore Sync" : "Retry Restore")
-            : (sync ? "Retry Preview Sync" : "Retry Preview");
+            ? (sync ? "重试恢复同步" : "重试恢复")
+            : (sync ? "重试预览同步" : "重试预览");
     }
     return {
         .save = {visible, visible && isAppearanceSaveEnabled(screen, session)},
@@ -521,13 +521,13 @@ bool dispatchMenuCloseRequest(
 std::string removeButtonLabel(std::int32_t slot, RemoveButtonState state) {
     switch (state) {
     case RemoveButtonState::initial:
-        return "Remove from Slot " + std::to_string(slot);
+        return "从槽位移除 " + std::to_string(slot);
     case RemoveButtonState::retryRemove:
-        return "Retry Remove Slot " + std::to_string(slot);
+        return "重试移除槽 " + std::to_string(slot);
     case RemoveButtonState::retrySynchronization:
-        return "Retry Sync Slot " + std::to_string(slot);
+        return "重试同步槽 " + std::to_string(slot);
     }
-    return "Remove from Slot " + std::to_string(slot);
+    return "从槽位移除 " + std::to_string(slot);
 }
 
 bool isRemoveConfirmationEnabled(
@@ -539,7 +539,7 @@ bool isRemoveConfirmationEnabled(
 SlotLockActionPresentation slotLockActionPresentation(bool locked) noexcept {
     return {
         .iconCodepoint = locked ? 0xF023U : 0xF09CU,
-        .tooltip = locked ? "Unlock tattoo" : "Lock tattoo",
+        .tooltip = locked ? "解锁纹身" : "锁纹身",
         .mutationsEnabled = !locked,
     };
 }
@@ -556,7 +556,7 @@ std::vector<std::string> buildCatalogBrowserDomainOptions(
     const std::vector<std::string>& domains) {
     std::vector<std::string> options;
     options.reserve(domains.size() + 1);
-    options.emplace_back("All Domains");
+    options.emplace_back("全部域");
     options.insert(options.end(), domains.begin(), domains.end());
     return options;
 }
@@ -853,13 +853,13 @@ std::vector<std::string_view> catalogMaterialBadgeLabels(
     std::vector<std::string_view> labels;
     labels.reserve(3);
     if (material.glow) {
-        labels.emplace_back("Glow");
+        labels.emplace_back("光");
     }
     if (material.bump) {
-        labels.emplace_back("Bump");
+        labels.emplace_back("凸");
     }
     if (material.gloss) {
-        labels.emplace_back("Gloss");
+        labels.emplace_back("亮");
     }
     return labels;
 }
@@ -985,7 +985,7 @@ std::int32_t tattooColorValue(TattooColorComponents components) noexcept {
 }
 
 std::string_view appearanceTextureMetadata(std::string_view texturePath) noexcept {
-    return texturePath.empty() ? "None" : texturePath;
+    return texturePath.empty() ? "无" : texturePath;
 }
 
 std::string_view appearanceTextureMetadata(
@@ -1003,7 +1003,7 @@ MaterialTextureSelectorPresentation materialTextureSelectorPresentation(
     bool glow) noexcept {
     MaterialTextureSelectorPresentation presentation{
         .visible = !options.empty(),
-        .currentLabel = "Current (unlisted)",
+        .currentLabel = "当前(未列出)",
         .widgetId = glow ? "##GlowTextureSelector" : "##BumpTextureSelector",
     };
     for (const auto& option : options) {
@@ -1037,15 +1037,15 @@ std::string_view appearancePresetStatusMessage(
     const AppearancePresetUiState state) noexcept {
     switch (state) {
     case AppearancePresetUiState::unavailable:
-        return "Unavailable";
+        return "不可用";
     case AppearancePresetUiState::empty:
-        return "No appearance presets saved.";
+        return "尚未保存外观预设。";
     case AppearancePresetUiState::ready:
         return {};
     case AppearancePresetUiState::limitReached:
-        return "20 preset limit reached";
+        return "已达20预设上限";
     case AppearancePresetUiState::pending:
-        return "Updating appearance presets...";
+        return "正在更新外观预设...";
     }
     return {};
 }
@@ -1128,7 +1128,7 @@ std::string formatCatalogTattooTooltip(
         return tooltip;
     }
 
-    tooltip += "\nIn use: Slots ";
+    tooltip += "\n占用:槽 ";
     for (std::size_t index = 0; index < inUseSlots.size(); ++index) {
         if (index != 0) {
             tooltip += ", ";
@@ -1197,11 +1197,11 @@ bool equivalentThumbnailPaths(std::string_view left, std::string_view right) noe
 std::string_view catalogThumbnailStatusLabel(NativeThumbnailStatus status) noexcept {
     switch (status) {
     case NativeThumbnailStatus::loading:
-        return "Loading";
+        return "载入";
     case NativeThumbnailStatus::missing:
-        return "Missing";
+        return "缺失";
     case NativeThumbnailStatus::broken:
-        return "Broken";
+        return "损坏";
     case NativeThumbnailStatus::placeholder:
     case NativeThumbnailStatus::ready:
         return {};
@@ -1294,23 +1294,23 @@ CatalogBrowserEmptyState classifyCatalogBrowserEmptyState(
 std::string_view catalogBrowserEmptyMessage(CatalogBrowserEmptyState state) noexcept {
     switch (state) {
     case CatalogBrowserEmptyState::emptyCatalog:
-        return "The tattoo catalog is empty. Refresh the catalog to browse tattoos.";
+        return "纹身目录为空。刷新目录以浏览纹身。";
     case CatalogBrowserEmptyState::noMatches:
-        return "No tattoos match the current filters.";
+        return "无纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noAppliedMatches:
-        return "No applied tattoos match the current filters.";
+        return "无已应用纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noFavoriteMatches:
-        return "No favorite tattoos match the current filters.";
+        return "无收藏纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noFavoriteAppliedMatches:
-        return "No favorite applied tattoos match the current filters.";
+        return "无收藏的已应用纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noRecentMatches:
-        return "No recently used tattoos match the current filters.";
+        return "无最近使用纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noFavoriteRecentMatches:
-        return "No favorite recently used tattoos match the current filters.";
+        return "无收藏的最近使用纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noAppliedRecentMatches:
-        return "No applied recently used tattoos match the current filters.";
+        return "无已应用的最近使用纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::noFavoriteAppliedRecentMatches:
-        return "No favorite applied recently used tattoos match the current filters.";
+        return "无收藏的已应用最近使用纹身匹配当前筛选。";
     case CatalogBrowserEmptyState::none:
         return {};
     }
@@ -1365,7 +1365,7 @@ void renderSlotImage(
         return;
     }
     if (!slot.tattoo || slot.tattoo->texturePath.empty()) {
-        ImGuiMCP::TextUnformatted("No thumbnail");
+        ImGuiMCP::TextUnformatted("无预览图");
         return;
     }
 
@@ -1423,7 +1423,7 @@ bool renderActorTargetHeader(
         kind, resolving, workflow.isMutationInFlight());
     ActorTargetHeaderIntent intent = ActorTargetHeaderIntent::none;
     ImGuiMCP::BeginDisabled(!controls.playerEnabled);
-    if (ImGuiMCP::Button("Player")) {
+    if (ImGuiMCP::Button("玩家")) {
         intent = ActorTargetHeaderIntent::player;
     }
     ImGuiMCP::EndDisabled();
@@ -1431,7 +1431,7 @@ bool renderActorTargetHeader(
     const bool chooseNpcEnabled =
         !workflow.isActorTargetResolutionInFlight() && !workflow.isMutationInFlight();
     ImGuiMCP::BeginDisabled(!chooseNpcEnabled);
-    if (ImGuiMCP::Button("Choose NPC")) {
+    if (ImGuiMCP::Button("选择NPC")) {
         intent = ActorTargetHeaderIntent::npcPicker;
     }
     ImGuiMCP::EndDisabled();
@@ -1471,16 +1471,16 @@ bool renderActorTargetHeader(
                 pickerStatus.data());
         }
         ImGuiMCP::BeginDisabled(workflow.isActorTargetResolutionInFlight());
-        if (ImGuiMCP::Button("Refresh NPC List")) {
+        if (ImGuiMCP::Button("刷新NPC列表")) {
             (void)workflow.refreshExplicitNpcTargetList();
         }
         ImGuiMCP::EndDisabled();
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Button("Close NPC Picker")) {
+        if (ImGuiMCP::Button("关闭NPC选择")) {
             workflow.closeExplicitNpcPicker();
         }
         if (workflow.explicitNpcScanRetryAvailable()) {
-            if (ImGuiMCP::Button("Retry NPC Scan")) {
+            if (ImGuiMCP::Button("重扫NPC")) {
                 (void)workflow.retryExplicitNpcScan();
             }
         }
@@ -1504,7 +1504,7 @@ void renderLoadoutStoreStatus(NativeSlotWorkflowModel& workflow) {
     const auto status = loadoutStatusMessage(workflow.tattooLoadouts().size(), workflow.tattooLoadoutStorePending());
     if (!status.empty()) ImGuiMCP::TextUnformatted(status.data());
     if (const auto* error = workflow.tattooLoadoutStoreError()) {
-        const auto message = "Loadouts: " + error->message;
+        const auto message = "配置: " + error->message;
         ImGuiMCP::TextWrapped("%s", message.c_str());
         ImGuiMCP::BeginDisabled(workflow.tattooLoadoutStorePending());
         if (ImGuiMCP::Button("Retry##LoadoutStore"))
@@ -1521,7 +1521,7 @@ void renderLoadoutControls(NativeSlotWorkflowModel& workflow) {
     const bool actorEnabled = actorTargetActionsEnabled(workflow.isActorTargetResolutionInFlight(), workflow.actorTarget()) &&
         !workflow.isMutationInFlight();
     ImGuiMCP::BeginDisabled(pending || loadouts.empty() || workflow.isMutationInFlight());
-    if (ImGuiMCP::BeginCombo("Loadout", selected ? labels[*selected].c_str() : "Select loadout")) {
+    if (ImGuiMCP::BeginCombo("配置", selected ? labels[*selected].c_str() : "选择配置")) {
         for (std::size_t index = 0; index < labels.size(); ++index) {
             ImGuiMCP::PushID(static_cast<int>(index));
             if (ImGuiMCP::Selectable(labels[index].c_str(), selected == index)) workflow.selectTattooLoadout(index);
@@ -1535,13 +1535,13 @@ void renderLoadoutControls(NativeSlotWorkflowModel& workflow) {
     ImGuiMCP::EndDisabled();
     ImGuiMCP::SameLine();
     ImGuiMCP::BeginDisabled(pending || !actorEnabled);
-    if (ImGuiMCP::Button("Save Current")) (void)workflow.requestTattooLoadoutCapture();
+    if (ImGuiMCP::Button("保存当前")) (void)workflow.requestTattooLoadoutCapture();
     ImGuiMCP::EndDisabled();
     ImGuiMCP::SameLine();
     ImGuiMCP::BeginDisabled(pending || !selected || workflow.isMutationInFlight());
     if (ImGuiMCP::Button("Manage##Loadouts")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::manage);
     ImGuiMCP::EndDisabled();
-    if (workflow.tattooLoadoutActorPending()) ImGuiMCP::TextUnformatted("Reading fresh Actor state...");
+    if (workflow.tattooLoadoutActorPending()) ImGuiMCP::TextUnformatted("读取最新角色状态...");
     renderLoadoutStoreStatus(workflow);
 }
 
@@ -1556,14 +1556,14 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
     const auto screen = workflow.tattooLoadoutScreen();
     bool open = true;
     ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0F);
-    ImGuiMCP::Begin("Tattoo Browser##SlaveTatsUI",
+    ImGuiMCP::Begin("纹身浏览##SlaveTatsUI",
         workflow.tattooLoadoutCanDismiss() ? &open : nullptr,
         ImGuiMCP::ImGuiWindowFlags_NoCollapse | ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
             ImGuiMCP::ImGuiWindowFlags_NoScrollWithMouse);
     if (renderActorTargetHeader(workflow)) {
         ImGuiMCP::End(); ImGuiMCP::PopStyleVar(); return;
     }
-    ImGuiMCP::TextUnformatted("Saved Tattoo Loadouts");
+    ImGuiMCP::TextUnformatted("已存纹身配置");
     const auto selected = workflow.selectedTattooLoadout();
     if (selected) ImGuiMCP::TextUnformatted(workflow.tattooLoadouts()[*selected].name.c_str());
     const float startY = ImGuiMCP::GetCursorPosY();
@@ -1574,7 +1574,7 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
         renderLoadoutStoreStatus(workflow);
         if (const auto* error = workflow.error()) ImGuiMCP::TextWrapped("%s", error->message.c_str());
         if (screen == TattooLoadoutScreen::captureSummary) {
-            ImGuiMCP::TextUnformatted("Save managed tattoos from all four areas. External overlays are omitted.");
+            ImGuiMCP::TextUnformatted("保存全部四个区域的受管纹身。外部覆盖将被忽略。");
             if (const auto* capture = workflow.tattooLoadoutCapture()) {
                 const auto counts = loadoutCaptureCounts(*capture);
                 for (std::size_t index = 0; index < counts.size(); ++index)
@@ -1587,43 +1587,43 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
         } else if (screen == TattooLoadoutScreen::manage) {
             ImGuiMCP::BeginDisabled(pending);
             (void)inputTextString("Name##RenameLoadout", workflow.tattooLoadoutName());
-            if (ImGuiMCP::Button("Delete...")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::requestDelete);
+            if (ImGuiMCP::Button("删除...")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::requestDelete);
             ImGuiMCP::EndDisabled();
             primaryEnabled = primaryEnabled && workflow.tattooLoadoutName().find_first_not_of(" \t\r\n") != std::string::npos;
         } else if (screen == TattooLoadoutScreen::overwriteConfirmation) {
-            ImGuiMCP::TextWrapped("Overwrite the selected loadout with the captured four-area state?");
+            ImGuiMCP::TextWrapped("用捕获的四区域状态覆盖所选配置？");
         } else if (screen == TattooLoadoutScreen::deleteConfirmation) {
-            ImGuiMCP::TextWrapped("Delete this saved loadout? Actor tattoos will remain unchanged.");
+            ImGuiMCP::TextWrapped("删除此已保存配置？角色纹身将保持不变。");
         } else if (screen == TattooLoadoutScreen::preview) {
             const auto* preview = workflow.tattooLoadoutPreview();
             primaryEnabled = primaryEnabled && preview && preview->blockers.empty();
-            ImGuiMCP::TextWrapped("Exact restore removes managed tattoos absent from this loadout.");
+            ImGuiMCP::TextWrapped("精确恢复会移除本配置中不存在的受管纹身。");
             if (preview && preview->blockers.empty()) {
                 const auto summary = summarizeLoadoutPlan(preview->plan);
                 for (std::size_t index = 0; index < summary.size(); ++index) {
                     const auto& area = summary[index];
                     ImGuiMCP::SeparatorText(slotAreaLabel(static_cast<core::TattooArea>(index)).data());
-                    ImGuiMCP::Text("Add: %zu / Replace: %zu / Remove: %zu", area.add, area.replace, area.remove);
-                    ImGuiMCP::Text("Appearance: %zu / Unchanged: %zu / Preserved: %zu", area.appearance, area.unchanged, area.preserved);
+                    ImGuiMCP::Text("添加:%zu / 替换:%zu / 移除:%zu", area.add, area.replace, area.remove);
+                    ImGuiMCP::Text("外观: %zu / 未变: %zu / 保留: %zu", area.appearance, area.unchanged, area.preserved);
                 }
             } else if (preview) {
-                ImGuiMCP::TextUnformatted("Preflight rejected. Resolve these conflicts and run Load again:");
+                ImGuiMCP::TextUnformatted("预检被拒绝。请解决冲突后重新载入:");
                 for (const auto& blocker : preview->blockers) {
                     const auto reason = formatLoadoutSlotReason(blocker.area, blocker.slot, blocker.message);
                     ImGuiMCP::TextWrapped("%s", reason.c_str());
                 }
             }
         } else if (screen == TattooLoadoutScreen::restoring) {
-            ImGuiMCP::TextUnformatted("Restoring loadout... Please wait.");
+            ImGuiMCP::TextUnformatted("正在恢复配置...请稍候。");
         } else if (screen == TattooLoadoutScreen::result) {
             if (const auto* result = workflow.tattooLoadoutResult()) {
                 ImGuiMCP::TextUnformatted(loadoutResultLabel(result->state).data());
                 if (result->state == core::TattooLoadoutRestoreState::rollbackComplete)
-                    ImGuiMCP::TextWrapped("Restore failed. The original managed tattoos were recovered and verified.");
+                    ImGuiMCP::TextWrapped("恢复失败。原始受管纹身已恢复并验证。");
                 if (result->state == core::TattooLoadoutRestoreState::rollbackIncomplete)
-                    ImGuiMCP::TextWrapped("Restore failed and recovery could not be verified. Inspect the affected slots.");
+                    ImGuiMCP::TextWrapped("恢复失败且无法验证恢复。请检查受影响槽位。");
                 if (!result->synchronizationRetryAvailable && !workflow.tattooLoadoutCanDismiss())
-                    ImGuiMCP::TextWrapped("Current Slots must refresh before returning. Use Refresh Slots if the refresh fails.");
+                    ImGuiMCP::TextWrapped("返回前须刷新当前槽位。若刷新失败请用刷新槽位。");
                 for (const auto& blocker : result->blockers) {
                     const auto reason = formatLoadoutSlotReason(blocker.area, blocker.slot, blocker.message);
                     ImGuiMCP::TextWrapped("%s", reason.c_str());
@@ -1640,14 +1640,14 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
     const auto footer = loadoutFooterPresentation(screen, primaryEnabled);
     const auto* style = ImGuiMCP::GetStyle();
     const auto padding = style ? style->FramePadding.x * 2 : 16.0F;
-    const auto rightLabel = footer.cancel ? "Cancel" : "Close";
+    const auto rightLabel = footer.cancel ? "取消" : "关";
     if (ImGuiMCP::BeginTable("LoadoutFooter", 3, ImGuiMCP::ImGuiTableFlags_SizingStretchProp | ImGuiMCP::ImGuiTableFlags_NoPadOuterX)) {
-        ImGuiMCP::TableSetupColumn("Back", ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, ImGuiMCP::CalcTextSize("Back").x + padding);
-        ImGuiMCP::TableSetupColumn("Actions", ImGuiMCP::ImGuiTableColumnFlags_WidthStretch);
-        ImGuiMCP::TableSetupColumn("Close", ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, ImGuiMCP::CalcTextSize(rightLabel).x + padding);
+        ImGuiMCP::TableSetupColumn("返", ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, ImGuiMCP::CalcTextSize("返").x + padding);
+        ImGuiMCP::TableSetupColumn("操作", ImGuiMCP::ImGuiTableColumnFlags_WidthStretch);
+        ImGuiMCP::TableSetupColumn("关", ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, ImGuiMCP::CalcTextSize(rightLabel).x + padding);
         ImGuiMCP::TableNextRow(); ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::BeginDisabled(pending || !workflow.tattooLoadoutCanDismiss());
-        if (footer.back && ImGuiMCP::Button("Back")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::back);
+        if (footer.back && ImGuiMCP::Button("返")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::back);
         ImGuiMCP::EndDisabled();
         ImGuiMCP::TableSetColumnIndex(1);
         if (!footer.primary.empty()) {
@@ -1663,17 +1663,17 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
         }
         if (const auto* result = workflow.tattooLoadoutResult(); result && result->synchronizationRetryAvailable && result->retryId) {
             ImGuiMCP::BeginDisabled(pending);
-            if (ImGuiMCP::Button("Retry Synchronization")) (void)workflow.retryTattooLoadoutSynchronization();
+            if (ImGuiMCP::Button("重试同步")) (void)workflow.retryTattooLoadoutSynchronization();
             ImGuiMCP::EndDisabled();
         } else if (workflow.tattooLoadoutResult()) {
             ImGuiMCP::BeginDisabled(pending);
-            if (ImGuiMCP::Button("Refresh Slots")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::refreshSlots);
+            if (ImGuiMCP::Button("刷新槽位")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::refreshSlots);
             ImGuiMCP::EndDisabled();
         }
         ImGuiMCP::TableSetColumnIndex(2);
         ImGuiMCP::BeginDisabled(pending || !workflow.tattooLoadoutCanDismiss());
-        if (footer.cancel && ImGuiMCP::Button("Cancel")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::cancel);
-        if (footer.close && ImGuiMCP::Button("Close")) open = false;
+        if (footer.cancel && ImGuiMCP::Button("取消")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::cancel);
+        if (footer.close && ImGuiMCP::Button("关")) open = false;
         ImGuiMCP::EndDisabled();
         ImGuiMCP::EndTable();
     }
@@ -1700,7 +1700,7 @@ void renderCurrentSlots(
     bool open = true;
     ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0F);
     ImGuiMCP::Begin(
-        "Tattoo Browser##SlaveTatsUI",
+        "纹身浏览##SlaveTatsUI",
         &open,
         ImGuiMCP::ImGuiWindowFlags_NoCollapse |
             ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
@@ -1718,7 +1718,7 @@ void renderCurrentSlots(
     SlotPageRange page;
     bool tattoosTab = false;
     if (ImGuiMCP::BeginTabBar("CurrentSlotsTabs")) {
-        if (ImGuiMCP::BeginTabItem("Tattoos")) {
+        if (ImGuiMCP::BeginTabItem("纹身")) {
             tattoosTab = true;
             constexpr std::array<core::TattooArea, 4> areas{
                 core::TattooArea::body,
@@ -1785,7 +1785,7 @@ void renderCurrentSlots(
                     const auto status = actorTargetStatusLabel(
                         workflow.isActorTargetResolutionInFlight(), workflow.actorTarget());
                     ImGuiMCP::TextUnformatted(
-                        status.empty() ? "Loading tattoo slots..." : status.data());
+                        status.empty() ? "载入纹身槽位..." : status.data());
                 }
                 ImGuiMCP::EndChild();
             } else if (ImGuiMCP::BeginTable(
@@ -1818,7 +1818,7 @@ void renderCurrentSlots(
                                 ImGuiMCP::ImGuiWindowFlags_NoScrollWithMouse)) {
                         const auto cardOrigin = ImGuiMCP::GetCursorScreenPos();
                         const float cardWidth = ImGuiMCP::GetContentRegionAvail().x;
-                        ImGuiMCP::Text("Slot %d", slot.index);
+                        ImGuiMCP::Text("槽 %d", slot.index);
                         if (const auto dot = calculateSlotReadOnlyIndicator(
                                 slot.occupancy, cardWidth, ImGuiMCP::GetTextLineHeight())) {
                             ImGuiMCP::ImDrawListManager::AddCircleFilled(
@@ -1872,11 +1872,11 @@ void renderCurrentSlots(
                     if (ImGuiMCP::IsItemHovered(ImGuiMCP::ImGuiHoveredFlags_AllowWhenDisabled)) {
                         if (slot.occupancy == core::SlotOccupancy::external) {
                             ImGuiMCP::SetTooltip(
-                                "Slot %d - Read Only: managed by another overlay mod", slot.index);
+                                "槽 %d - 只读: 由其他覆盖模组管理", slot.index);
                         } else if (slot.tattoo) {
-                            ImGuiMCP::SetTooltip("Slot %d - %s", slot.index, slot.tattoo->name.c_str());
+                            ImGuiMCP::SetTooltip("槽 %d - %s", slot.index, slot.tattoo->name.c_str());
                         } else {
-                            ImGuiMCP::SetTooltip("Add a tattoo to Slot %d", slot.index);
+                            ImGuiMCP::SetTooltip("向槽位%d添加纹身", slot.index);
                         }
                     }
                 }
@@ -1884,7 +1884,7 @@ void renderCurrentSlots(
             }
             ImGuiMCP::EndTabItem();
         }
-        if (ImGuiMCP::BeginTabItem("Loadouts")) {
+        if (ImGuiMCP::BeginTabItem("配置")) {
             renderLoadoutControls(workflow);
             ImGuiMCP::EndTabItem();
         }
@@ -1895,7 +1895,7 @@ void renderCurrentSlots(
         ImGuiMCP::GetCursorPosY(),
         ImGuiMCP::GetContentRegionAvail().y,
         footerHeight));
-    const float closeButtonWidth = ImGuiMCP::CalcTextSize("Close").x +
+    const float closeButtonWidth = ImGuiMCP::CalcTextSize("关").x +
         (style ? style->FramePadding.x * 2.0F : 16.0F);
     if (ImGuiMCP::BeginTable(
             "SlotFooter",
@@ -1909,12 +1909,12 @@ void renderCurrentSlots(
         ImGuiMCP::TableSetColumnIndex(0);
         if (tattoosTab) {
             ImGuiMCP::BeginDisabled(page.pageCount == 0 || page.pageIndex == 0);
-            if (ImGuiMCP::Button("Prev##Slots")) {
+            if (ImGuiMCP::Button("上##Slots")) {
                 workflow.previousSlotPage();
             }
             ImGuiMCP::EndDisabled();
             ImGuiMCP::SameLine();
-            ImGuiMCP::TextUnformatted("Page");
+            ImGuiMCP::TextUnformatted("页");
             ImGuiMCP::SameLine();
             static CatalogBrowserPageInputState slotPageInputState;
             slotPageInputState.synchronize(page.pageIndex, page.pageCount);
@@ -1934,14 +1934,14 @@ void renderCurrentSlots(
             ImGuiMCP::Text("/ %zu", page.pageCount);
             ImGuiMCP::SameLine();
             ImGuiMCP::BeginDisabled(page.pageCount == 0 || page.pageIndex + 1 >= page.pageCount);
-            if (ImGuiMCP::Button("Next##Slots")) {
+            if (ImGuiMCP::Button("下##Slots")) {
                 workflow.nextSlotPage();
             }
             ImGuiMCP::EndDisabled();
         }
 
         ImGuiMCP::TableSetColumnIndex(1);
-        if (ImGuiMCP::Button("Close")) {
+        if (ImGuiMCP::Button("关")) {
             open = false;
         }
         ImGuiMCP::EndTable();
@@ -1986,7 +1986,7 @@ void renderSlotActions(
     bool open = true;
     ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0F);
     ImGuiMCP::Begin(
-        "Tattoo Browser##SlaveTatsUI",
+        "纹身浏览##SlaveTatsUI",
         &open,
         ImGuiMCP::ImGuiWindowFlags_NoCollapse |
             ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
@@ -2012,7 +2012,7 @@ void renderSlotActions(
         workflow.screen() == SlotWorkflowScreen::removeConfirmation;
     const bool removing = workflow.screen() == SlotWorkflowScreen::removing;
     ImGuiMCP::TextUnformatted(
-        confirming || removing ? "Remove Tattoo?" : "Tattoo Slot Actions");
+        confirming || removing ? "移除纹身?" : "纹身槽位操作");
     if (target) {
         const auto targetLabel = formatSlotTargetLabel(
             workflow.actorTarget(), workflow.selectedArea(), *target);
@@ -2022,14 +2022,14 @@ void renderSlotActions(
         ImGuiMCP::Text("%s / %s",
             slot->tattoo->section.c_str(),
             slot->tattoo->name.c_str());
-        ImGuiMCP::Text("Domain: %s", domainPresentationLabel(slot->tattoo->domain).data());
+        ImGuiMCP::Text("域: %s", domainPresentationLabel(slot->tattoo->domain).data());
     }
     if (const auto* error = workflow.error()) {
         ImGuiMCP::TextUnformatted(error->message.c_str());
     } else if (removing) {
-        ImGuiMCP::TextUnformatted("Removing tattoo...");
+        ImGuiMCP::TextUnformatted("移除中...");
     } else if (confirming) {
-        ImGuiMCP::TextUnformatted("This will clear the selected SlaveTats slot.");
+        ImGuiMCP::TextUnformatted("将清除所选SlaveTats槽位。");
     }
 
     const float footerHeight = ImGuiMCP::GetFrameHeightWithSpacing();
@@ -2058,9 +2058,9 @@ void renderSlotActions(
         ImGuiMCP::GetContentRegionAvail().y,
         footerHeight));
     const auto* style = ImGuiMCP::GetStyle();
-    const float cancelButtonWidth = ImGuiMCP::CalcTextSize("Cancel").x +
+    const float cancelButtonWidth = ImGuiMCP::CalcTextSize("取消").x +
         (style ? style->FramePadding.x * 2.0F : 16.0F);
-    const float closeButtonWidth = ImGuiMCP::CalcTextSize("Close").x +
+    const float closeButtonWidth = ImGuiMCP::CalcTextSize("关").x +
         (style ? style->FramePadding.x * 2.0F : 16.0F);
     if (ImGuiMCP::BeginTable(
             "SlotActionsFooter",
@@ -2098,13 +2098,13 @@ void renderSlotActions(
             const bool locked = slot && slot->tattoo && slot->tattoo->locked;
             const auto lockPresentation = slotLockActionPresentation(locked);
             const bool lockStateChangeInFlight = workflow.isLockStateChangeInFlight();
-            if (ImGuiMCP::Button("Back")) {
+            if (ImGuiMCP::Button("返")) {
                 workflow.backToSlots();
             }
             ImGuiMCP::SameLine();
             ImGuiMCP::BeginDisabled(!targetActionsEnabled ||
                 !lockPresentation.mutationsEnabled || lockStateChangeInFlight);
-            if (ImGuiMCP::Button("Replace")) {
+            if (ImGuiMCP::Button("替换")) {
                 (void)workflow.replaceSelectedSlot();
             }
             ImGuiMCP::EndDisabled();
@@ -2114,7 +2114,7 @@ void renderSlotActions(
             if (canEditAppearance) {
                 ImGuiMCP::SameLine();
                 ImGuiMCP::BeginDisabled(!targetActionsEnabled || lockStateChangeInFlight);
-                if (ImGuiMCP::Button("Edit Appearance")) {
+                if (ImGuiMCP::Button("编辑外观")) {
                     (void)workflow.beginEditAppearance();
                 }
                 ImGuiMCP::EndDisabled();
@@ -2122,7 +2122,7 @@ void renderSlotActions(
             ImGuiMCP::SameLine();
             ImGuiMCP::BeginDisabled(!targetActionsEnabled ||
                 !lockPresentation.mutationsEnabled || lockStateChangeInFlight);
-            if (ImGuiMCP::Button("Remove")) {
+            if (ImGuiMCP::Button("移除")) {
                 (void)workflow.requestRemove();
             }
             ImGuiMCP::EndDisabled();
@@ -2130,13 +2130,13 @@ void renderSlotActions(
         ImGuiMCP::TableSetColumnIndex(1);
         if (confirming || removing) {
             ImGuiMCP::BeginDisabled(removing);
-            if (ImGuiMCP::Button("Cancel")) {
+            if (ImGuiMCP::Button("取消")) {
                 workflow.cancelRemove();
             }
             ImGuiMCP::EndDisabled();
         }
         ImGuiMCP::TableSetColumnIndex(2);
-        if (ImGuiMCP::Button("Close")) {
+        if (ImGuiMCP::Button("关")) {
             open = false;
         }
         ImGuiMCP::EndTable();
@@ -2169,7 +2169,7 @@ void renderPreview(
     bool open = true;
     ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0F);
     ImGuiMCP::Begin(
-        "Tattoo Browser##SlaveTatsUI",
+        "纹身浏览##SlaveTatsUI",
         &open,
         ImGuiMCP::ImGuiWindowFlags_NoCollapse |
             ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
@@ -2197,7 +2197,7 @@ void renderPreview(
     thumbnails.synchronize(std::move(epoch), paths);
     thumbnails.pump();
     const auto thumbnailViews = thumbnails.views();
-    ImGuiMCP::TextUnformatted("Preview Tattoo");
+    ImGuiMCP::TextUnformatted("预览纹身");
     if (target) {
         const auto targetLabel = formatSlotTargetLabel(
             workflow.actorTarget(), workflow.selectedArea(), *target);
@@ -2210,7 +2210,7 @@ void renderPreview(
     if (const auto* error = workflow.error()) {
         ImGuiMCP::TextUnformatted(error->message.c_str());
     } else if (applying) {
-        ImGuiMCP::TextUnformatted("Applying tattoo...");
+        ImGuiMCP::TextUnformatted("应用中...");
     }
 
     TattooColorComponents colorComponents =
@@ -2223,12 +2223,12 @@ void renderPreview(
     float alpha = appearance ? appearance->alpha : 1.0F;
     ImGuiMCP::BeginDisabled(!targetActionsEnabled || applying || !appearance);
     const bool colorChanged = ImGuiMCP::ColorEdit3(
-        "Color",
+        "色",
         pickerColor,
         ImGuiMCP::ImGuiColorEditFlags_DisplayHex |
             ImGuiMCP::ImGuiColorEditFlags_Uint8);
     const bool alphaChanged =
-        ImGuiMCP::SliderFloat("Alpha", &alpha, 0.0F, 1.0F, "%.2f");
+        ImGuiMCP::SliderFloat("透", &alpha, 0.0F, 1.0F, "%.2f");
     if (colorChanged || alphaChanged) {
         colorComponents = TattooColorComponents{
             .red = pickerColor[0],
@@ -2286,9 +2286,9 @@ void renderPreview(
         footerHeight));
     const auto* style = ImGuiMCP::GetStyle();
     const float horizontalButtonPadding = style ? style->FramePadding.x * 2.0F : 16.0F;
-    const float backButtonWidth = ImGuiMCP::CalcTextSize("Back").x + horizontalButtonPadding;
-    const float cancelButtonWidth = ImGuiMCP::CalcTextSize("Cancel").x + horizontalButtonPadding;
-    const float closeButtonWidth = ImGuiMCP::CalcTextSize("Close").x +
+    const float backButtonWidth = ImGuiMCP::CalcTextSize("返").x + horizontalButtonPadding;
+    const float cancelButtonWidth = ImGuiMCP::CalcTextSize("取消").x + horizontalButtonPadding;
+    const float closeButtonWidth = ImGuiMCP::CalcTextSize("关").x +
         horizontalButtonPadding;
     if (ImGuiMCP::BeginTable(
             "PreviewFooter",
@@ -2306,7 +2306,7 @@ void renderPreview(
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::BeginDisabled(applying);
-        if (ImGuiMCP::Button("Back")) {
+        if (ImGuiMCP::Button("返")) {
             workflow.backToPicker();
         }
         ImGuiMCP::EndDisabled();
@@ -2322,12 +2322,12 @@ void renderPreview(
         ImGuiMCP::EndDisabled();
         ImGuiMCP::TableSetColumnIndex(2);
         ImGuiMCP::BeginDisabled(applying);
-        if (ImGuiMCP::Button("Cancel")) {
+        if (ImGuiMCP::Button("取消")) {
             workflow.cancelPreview();
         }
         ImGuiMCP::EndDisabled();
         ImGuiMCP::TableSetColumnIndex(3);
-        if (ImGuiMCP::Button("Close")) {
+        if (ImGuiMCP::Button("关")) {
             open = false;
         }
         ImGuiMCP::EndTable();
@@ -2360,7 +2360,7 @@ void renderEditAppearance(
     bool open = true;
     ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0F);
     ImGuiMCP::Begin(
-        "Tattoo Browser##SlaveTatsUI",
+        "纹身浏览##SlaveTatsUI",
         &open,
         ImGuiMCP::ImGuiWindowFlags_NoCollapse |
             ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
@@ -2399,7 +2399,7 @@ void renderEditAppearance(
     thumbnails.pump();
     const auto thumbnailViews = thumbnails.views();
     const bool saving = workflow.screen() == SlotWorkflowScreen::savingAppearance;
-    ImGuiMCP::TextUnformatted("Edit Appearance");
+    ImGuiMCP::TextUnformatted("编辑外观");
     if (session) {
         const auto targetLabel = formatSlotTargetLabel(
             workflow.actorTarget(), session->area, session->slot);
@@ -2409,22 +2409,22 @@ void renderEditAppearance(
             const bool favorited = catalog.isFavorite(favoriteTattoo);
             ImGuiMCP::SameLine();
             ImGuiMCP::BeginDisabled(workflow.favoritePending());
-            if (ImGuiMCP::Button(favorited ? "Favorited" : "Favorite")) {
+            if (ImGuiMCP::Button(favorited ? "已收藏" : "收藏")) {
                 (void)workflow.requestFavorite(favoriteTattoo, !favorited);
             }
             ImGuiMCP::EndDisabled();
         }
     }
     if (const auto* favoriteError = workflow.favoriteError()) {
-        ImGuiMCP::Text("Favorites: %s", favoriteError->message.c_str());
-        if (ImGuiMCP::Button("Retry favorite save")) {
+        ImGuiMCP::Text("收藏: %s", favoriteError->message.c_str());
+        if (ImGuiMCP::Button("重试收藏保存")) {
             (void)workflow.retryFavorite();
         }
     }
     if (const auto* error = workflow.error()) {
         ImGuiMCP::TextUnformatted(error->message.c_str());
     } else if (saving) {
-        ImGuiMCP::TextUnformatted("Saving appearance...");
+        ImGuiMCP::TextUnformatted("保存外观中...");
     }
 
     TattooColorComponents colorComponents =
@@ -2462,12 +2462,12 @@ void renderEditAppearance(
                 ? AppearancePresetUiState::limitReached
                 : AppearancePresetUiState::ready;
 
-    ImGuiMCP::SeparatorText("Appearance Preset");
+    ImGuiMCP::SeparatorText("外观预设");
     const char* selectedPresetLabel = hasSelectedAppearancePreset
         ? appearancePresets[*selectedAppearancePreset].name.c_str()
-        : "Select preset";
+        : "选择预设";
     ImGuiMCP::BeginDisabled(appearancePresetPending || appearancePresets.empty());
-    if (ImGuiMCP::BeginCombo("Preset", selectedPresetLabel)) {
+    if (ImGuiMCP::BeginCombo("预设", selectedPresetLabel)) {
         for (std::size_t index = 0; index < appearancePresets.size(); ++index) {
             const bool selected = selectedAppearancePreset == index;
             if (ImGuiMCP::Selectable(appearancePresets[index].name.c_str(), selected)) {
@@ -2483,7 +2483,7 @@ void renderEditAppearance(
 
     ImGuiMCP::BeginDisabled(
         appearancePresetPending || !hasSelectedAppearancePreset || !targetActionsEnabled);
-    if (ImGuiMCP::Button("Load")) {
+    if (ImGuiMCP::Button("载")) {
         (void)workflow.loadAppearancePreset(
             appearancePresets[*selectedAppearancePreset]);
     }
@@ -2493,17 +2493,17 @@ void renderEditAppearance(
     static std::string renamedPresetName;
     ImGuiMCP::SameLine();
     ImGuiMCP::BeginDisabled(appearancePresetPending || !targetActionsEnabled || !session);
-    if (ImGuiMCP::Button("Save Preset")) {
+    if (ImGuiMCP::Button("存预设")) {
         presetName.clear();
-        ImGuiMCP::OpenPopup("Save Appearance Preset");
+        ImGuiMCP::OpenPopup("保存外观预设");
     }
     ImGuiMCP::EndDisabled();
     ImGuiMCP::SameLine();
     ImGuiMCP::BeginDisabled(
         appearancePresetPending || !hasSelectedAppearancePreset || !targetActionsEnabled);
-    if (ImGuiMCP::Button("Manage")) {
+    if (ImGuiMCP::Button("管理")) {
         renamedPresetName = appearancePresets[*selectedAppearancePreset].name;
-        ImGuiMCP::OpenPopup("Manage Appearance Preset");
+        ImGuiMCP::OpenPopup("管理外观预设");
     }
     ImGuiMCP::EndDisabled();
 
@@ -2513,7 +2513,7 @@ void renderEditAppearance(
     }
     if (appearancePresetError) {
         const auto message = std::format(
-            "Appearance Presets: {}", appearancePresetError->message);
+            "外观预设: {}", appearancePresetError->message);
         ImGuiMCP::TextUnformatted(message.c_str());
         if (workflow.appearancePresetRetryAvailable()) {
             ImGuiMCP::SameLine();
@@ -2523,8 +2523,8 @@ void renderEditAppearance(
         }
     }
 
-    if (ImGuiMCP::BeginPopupModal("Save Appearance Preset")) {
-        ImGuiMCP::TextUnformatted("Save the current appearance values as:");
+    if (ImGuiMCP::BeginPopupModal("保存外观预设")) {
+        ImGuiMCP::TextUnformatted("将当前外观数值保存为:");
         ImGuiMCP::SetNextItemWidth(320.0F);
         (void)inputTextString("Name##SaveAppearancePreset", presetName);
         auto candidateName = std::string_view(presetName);
@@ -2559,7 +2559,7 @@ void renderEditAppearance(
         ImGuiMCP::EndPopup();
     }
 
-    if (ImGuiMCP::BeginPopupModal("Manage Appearance Preset")) {
+    if (ImGuiMCP::BeginPopupModal("管理外观预设")) {
         if (hasSelectedAppearancePreset) {
             ImGuiMCP::TextUnformatted(
                 appearancePresets[*selectedAppearancePreset].name.c_str());
@@ -2570,14 +2570,14 @@ void renderEditAppearance(
                 ImGuiMCP::TextUnformatted(appearancePresetError->message.c_str());
             }
             ImGuiMCP::BeginDisabled(renamedPresetName.empty());
-            if (ImGuiMCP::Button("Rename")) {
+            if (ImGuiMCP::Button("改名")) {
                 if (workflow.requestRenameAppearancePreset(renamedPresetName)) {
                     ImGuiMCP::CloseCurrentPopup();
                 }
             }
             ImGuiMCP::EndDisabled();
             ImGuiMCP::SameLine();
-            if (ImGuiMCP::Button("Delete")) {
+            if (ImGuiMCP::Button("删除")) {
                 if (workflow.requestDeleteAppearancePreset()) {
                     ImGuiMCP::CloseCurrentPopup();
                 }
@@ -2591,16 +2591,16 @@ void renderEditAppearance(
     }
 
     if (workflow.appearancePresetOverwriteConfirmation() &&
-        !ImGuiMCP::IsPopupOpen("Overwrite Appearance Preset")) {
-        ImGuiMCP::OpenPopup("Overwrite Appearance Preset");
+        !ImGuiMCP::IsPopupOpen("覆盖外观预设")) {
+        ImGuiMCP::OpenPopup("覆盖外观预设");
     }
-    if (ImGuiMCP::BeginPopupModal("Overwrite Appearance Preset")) {
+    if (ImGuiMCP::BeginPopupModal("覆盖外观预设")) {
         const auto* overwrite = workflow.appearancePresetOverwriteConfirmation();
         const auto message = std::format(
-            "Overwrite '{}' with the current appearance?",
+            "用当前外观覆盖 '{}'？",
             overwrite ? overwrite->name : std::string{});
         ImGuiMCP::TextUnformatted(message.c_str());
-        if (ImGuiMCP::Button("Overwrite")) {
+        if (ImGuiMCP::Button("覆盖")) {
             (void)workflow.confirmAppearancePresetOverwrite();
             ImGuiMCP::CloseCurrentPopup();
         }
@@ -2613,12 +2613,12 @@ void renderEditAppearance(
     }
 
     if (workflow.appearancePresetDeleteConfirmation() &&
-        !ImGuiMCP::IsPopupOpen("Delete Appearance Preset")) {
-        ImGuiMCP::OpenPopup("Delete Appearance Preset");
+        !ImGuiMCP::IsPopupOpen("删除外观预设")) {
+        ImGuiMCP::OpenPopup("删除外观预设");
     }
-    if (ImGuiMCP::BeginPopupModal("Delete Appearance Preset")) {
+    if (ImGuiMCP::BeginPopupModal("删除外观预设")) {
         const auto message = std::format(
-            "Delete '{}' permanently?",
+            "永久删除 '{}'？",
             hasSelectedAppearancePreset
                 ? appearancePresets[*selectedAppearancePreset].name
                 : std::string{});
@@ -2637,30 +2637,30 @@ void renderEditAppearance(
 
     ImGuiMCP::BeginDisabled(!targetActionsEnabled ||
         !isAppearanceEditingEnabled(workflow.screen(), session));
-    ImGuiMCP::SeparatorText("Basic");
+    ImGuiMCP::SeparatorText("基");
     const bool colorChanged = ImGuiMCP::ColorEdit3(
-        "Color", colorValues, ImGuiMCP::ImGuiColorEditFlags_NoInputs);
+        "色", colorValues, ImGuiMCP::ImGuiColorEditFlags_NoInputs);
     const bool alphaChanged =
-        ImGuiMCP::SliderFloat("Alpha", &alpha, 0.0F, 1.0F, "%.2f");
-    ImGuiMCP::SeparatorText("Material / Emission");
+        ImGuiMCP::SliderFloat("透", &alpha, 0.0F, 1.0F, "%.2f");
+    ImGuiMCP::SeparatorText("材质/发光");
     const bool glowChanged = ImGuiMCP::ColorEdit3(
-        "Glow Color", glowValues, ImGuiMCP::ImGuiColorEditFlags_NoInputs);
+        "发光色", glowValues, ImGuiMCP::ImGuiColorEditFlags_NoInputs);
     const bool emissiveSliderChanged = ImGuiMCP::SliderFloat(
-        "Emission Strength", &emissiveMult, 0.0F, 10.0F, "%.2f");
+        "发光强度", &emissiveMult, 0.0F, 10.0F, "%.2f");
     const bool emissiveInputChanged =
-        ImGuiMCP::InputFloat("Emission Strength Value", &emissiveMult, 0.0F, 0.0F, "%.3f");
+        ImGuiMCP::InputFloat("发光强度值", &emissiveMult, 0.0F, 0.0F, "%.3f");
     const auto controlRanges = editAppearanceControlRanges();
     const bool glossinessSliderChanged = ImGuiMCP::SliderFloat(
-        "Glossiness", &glossiness, 0.0F, controlRanges.glossinessMax, "%.2f",
+        "光泽", &glossiness, 0.0F, controlRanges.glossinessMax, "%.2f",
         ImGuiMCP::ImGuiSliderFlags_Logarithmic);
     const bool glossinessInputChanged =
-        ImGuiMCP::InputFloat("Glossiness Value", &glossiness, 0.0F, 0.0F, "%.3f");
+        ImGuiMCP::InputFloat("光泽值", &glossiness, 0.0F, 0.0F, "%.3f");
     const bool specularSliderChanged = ImGuiMCP::SliderFloat(
-        "Specular Strength", &specularStrength, 0.0F,
+        "高光强度", &specularStrength, 0.0F,
         controlRanges.specularStrengthMax, "%.2f",
         ImGuiMCP::ImGuiSliderFlags_Logarithmic);
     const bool specularInputChanged = ImGuiMCP::InputFloat(
-        "Specular Strength Value", &specularStrength, 0.0F, 0.0F, "%.3f");
+        "高光强度值", &specularStrength, 0.0F, 0.0F, "%.3f");
     const EditAppearanceFrameInteraction frameInteraction{
         .appearanceChanged = colorChanged || alphaChanged || glowChanged ||
             emissiveSliderChanged || emissiveInputChanged || glossinessSliderChanged ||
@@ -2713,28 +2713,28 @@ void renderEditAppearance(
             }
             ImGuiMCP::EndDisabled();
         };
-        renderTextureSelector("Glow Texture", session->glowTextureOptions,
+        renderTextureSelector("发光贴图", session->glowTextureOptions,
             session->edited.glowTexture, true,
             &NativeSlotWorkflowModel::selectGlowTexture);
-        renderTextureSelector("Bump Texture", session->bumpOptions,
+        renderTextureSelector("凹凸贴图", session->bumpOptions,
             session->edited.bump, false,
             &NativeSlotWorkflowModel::selectBumpTexture);
         if (session->edited.glow != 0 || !session->edited.glowTexture.empty() ||
             session->edited.emissiveMult != 1.0F) {
             ImGuiMCP::SameLine();
-            ImGuiMCP::TextUnformatted("Glow");
+            ImGuiMCP::TextUnformatted("光");
         }
         if (!session->edited.bump.empty()) {
             ImGuiMCP::SameLine();
-            ImGuiMCP::TextUnformatted("Bump");
+            ImGuiMCP::TextUnformatted("凸");
         }
         if (shouldShowAppearanceTextureMetadata(session->edited.glowTexture)) {
-            ImGuiMCP::TextUnformatted("Glow Texture:");
+            ImGuiMCP::TextUnformatted("发光贴图:");
             ImGuiMCP::SameLine();
             ImGuiMCP::TextUnformatted(appearanceTextureMetadata(*session, true).data());
         }
         if (shouldShowAppearanceTextureMetadata(session->edited.bump)) {
-            ImGuiMCP::TextUnformatted("Bump Texture:");
+            ImGuiMCP::TextUnformatted("凹凸贴图:");
             ImGuiMCP::SameLine();
             ImGuiMCP::TextUnformatted(appearanceTextureMetadata(*session, false).data());
         }
@@ -2792,9 +2792,9 @@ void renderEditAppearance(
                 ImGuiMCP::GetContentRegionAvail().y,
                 footerHeight));
             const auto* style = ImGuiMCP::GetStyle();
-            const float cancelButtonWidth = ImGuiMCP::CalcTextSize("Cancel").x +
+            const float cancelButtonWidth = ImGuiMCP::CalcTextSize("取消").x +
                 (style ? style->FramePadding.x * 2.0F : 16.0F);
-            const float closeButtonWidth = ImGuiMCP::CalcTextSize("Close").x +
+            const float closeButtonWidth = ImGuiMCP::CalcTextSize("关").x +
                 (style ? style->FramePadding.x * 2.0F : 16.0F);
             const auto actions = livePreviewPresentation(
                 workflow.screen(), workflow.editAppearance());
@@ -2817,7 +2817,7 @@ void renderEditAppearance(
                 ImGuiMCP::TableNextRow();
                 ImGuiMCP::TableSetColumnIndex(0);
                 ImGuiMCP::BeginDisabled(!targetActionsEnabled || !actions.save.enabled);
-                if (ImGuiMCP::Button("Save") && intent == EditAppearanceIntent::none) {
+                if (ImGuiMCP::Button("存") && intent == EditAppearanceIntent::none) {
                     intent = EditAppearanceIntent::save;
                 }
                 ImGuiMCP::EndDisabled();
@@ -2831,13 +2831,13 @@ void renderEditAppearance(
                 }
                 ImGuiMCP::TableSetColumnIndex(1);
                 ImGuiMCP::BeginDisabled(!actions.cancel.enabled);
-                if (ImGuiMCP::Button("Cancel") && intent == EditAppearanceIntent::none) {
+                if (ImGuiMCP::Button("取消") && intent == EditAppearanceIntent::none) {
                     intent = EditAppearanceIntent::cancel;
                 }
                 ImGuiMCP::EndDisabled();
                 ImGuiMCP::TableSetColumnIndex(2);
                 ImGuiMCP::BeginDisabled(!actions.close.enabled);
-                if (ImGuiMCP::Button("Close") && intent == EditAppearanceIntent::none) {
+                if (ImGuiMCP::Button("关") && intent == EditAppearanceIntent::none) {
                     intent = EditAppearanceIntent::close;
                 }
                 ImGuiMCP::EndDisabled();
@@ -2860,11 +2860,11 @@ std::string_view launcherModVersionLabel() noexcept {
 bool OfficialMenuFrameworkAdapter::renderLauncher(
     runtime::HotkeyBinding& hotkey, runtime::MenuSideSetting& menuSide,
     NativeThumbnailRuntime& thumbnails, NativeCatalogBrowserModel& catalog) {
-    ImGuiMCP::TextUnformatted("Open SlaveTatsUI when you are ready to browse tattoos.");
+    ImGuiMCP::TextUnformatted("准备好浏览纹身时打开SlaveTatsUI。");
     ImGuiMCP::TextUnformatted(launcherModVersionLabel().data());
     const auto hotkeyLabel = hotkey.label();
     static bool hotkeySaveFailed = false;
-    if (ImGuiMCP::BeginCombo("Hotkey", hotkeyLabel.c_str())) {
+    if (ImGuiMCP::BeginCombo("热键", hotkeyLabel.c_str())) {
         const auto selectedKey = hotkey.key();
         for (const auto& option : runtime::hotkeyOptions()) {
             const bool selected = option.key == selectedKey;
@@ -2878,14 +2878,14 @@ bool OfficialMenuFrameworkAdapter::renderLauncher(
         ImGuiMCP::EndCombo();
     }
     if (hotkeySaveFailed) {
-        ImGuiMCP::TextUnformatted("Could not save the hotkey setting.");
+        ImGuiMCP::TextUnformatted("无法保存热键设置。");
     }
     static bool menuSideSaveFailed = false;
     const auto selectedSide = menuSide.side();
     if (ImGuiMCP::BeginCombo(
-            "Browser position", selectedSide == runtime::MenuSide::left ? "Left" : "Right")) {
+            "浏览器位置", selectedSide == runtime::MenuSide::left ? "左" : "右")) {
         for (const auto side : {runtime::MenuSide::left, runtime::MenuSide::right}) {
-            const char* label = side == runtime::MenuSide::left ? "Left" : "Right";
+            const char* label = side == runtime::MenuSide::left ? "左" : "右";
             const bool selected = side == selectedSide;
             if (ImGuiMCP::Selectable(label, selected)) {
                 menuSideSaveFailed = !menuSide.select(side);
@@ -2895,40 +2895,40 @@ bool OfficialMenuFrameworkAdapter::renderLauncher(
         ImGuiMCP::EndCombo();
     }
     if (menuSideSaveFailed) {
-        ImGuiMCP::TextUnformatted("Could not save the browser position.");
+        ImGuiMCP::TextUnformatted("无法保存浏览器位置。");
     }
     static bool cameraOffsetSaveFailed = false;
     for (const auto side : {runtime::MenuSide::left, runtime::MenuSide::right}) {
         float offset = menuSide.initialCameraOffset(side);
         const char* label = side == runtime::MenuSide::left
-            ? "Opening frame X offset (Left)"
-            : "Opening frame X offset (Right)";
+            ? "打开框X偏移(左)"
+            : "打开框X偏移(右)";
         if (ImGuiMCP::SliderFloat(label, &offset, -0.15F, 0.15F, "%.2f")) {
             cameraOffsetSaveFailed = !menuSide.setInitialCameraOffset(side, offset);
         }
     }
     if (cameraOffsetSaveFailed) {
-        ImGuiMCP::TextUnformatted("Could not save the initial camera position.");
+        ImGuiMCP::TextUnformatted("无法保存初始相机位置。");
     }
     static bool cameraPanSaveFailed = false;
     for (const auto side : {runtime::MenuSide::left, runtime::MenuSide::right}) {
         auto pan = menuSide.initialCameraPan(side);
         const char* xLabel = side == runtime::MenuSide::left
-            ? "Initial Pan X (Left)" : "Initial Pan X (Right)";
+            ? "初始平移X(左)" : "初始平移X(右)";
         const char* yLabel = side == runtime::MenuSide::left
-            ? "Initial Pan Y (Left)" : "Initial Pan Y (Right)";
+            ? "初始平移Y(左)" : "初始平移Y(右)";
         bool changed = ImGuiMCP::InputFloat(xLabel, &pan.x, 0.0F, 0.0F, "%.1f");
         changed = ImGuiMCP::InputFloat(yLabel, &pan.y, 0.0F, 0.0F, "%.1f") || changed;
         if (changed) cameraPanSaveFailed = !menuSide.setInitialCameraPan(side, pan);
     }
     if (cameraPanSaveFailed) {
-        ImGuiMCP::TextUnformatted("Could not save the initial camera Pan.");
+        ImGuiMCP::TextUnformatted("无法保存初始相机平移。");
     }
     static bool cacheBuildUnavailable = false;
     auto buildStatus = thumbnails.diskCacheBuildStatus();
     auto clearState = thumbnails.diskCacheClearState();
     if (!buildStatus.active && clearState != ThumbnailCacheClearState::pending &&
-        ImGuiMCP::Button("Build Thumbnail Cache")) {
+        ImGuiMCP::Button("构建缩略图缓存")) {
         auto paths = catalog.diskCacheBuildPaths();
         cacheBuildUnavailable = paths.empty();
         if (!cacheBuildUnavailable) {
@@ -2938,35 +2938,35 @@ bool OfficialMenuFrameworkAdapter::renderLauncher(
     }
     thumbnails.pumpDiskCacheBuild();
     if (buildStatus.active) {
-        ImGuiMCP::Text("Building Thumbnail Cache: %zu / %zu", buildStatus.completed,
+        ImGuiMCP::Text("构建缩略图缓存:%zu / %zu", buildStatus.completed,
             buildStatus.total);
-        ImGuiMCP::TextUnformatted("Please keep this menu open until the build is complete.");
+        ImGuiMCP::TextUnformatted("构建完成前请保持菜单打开。");
     } else if (buildStatus.total > 0) {
         if (buildStatus.failed == 0)
-            ImGuiMCP::TextUnformatted("Thumbnail Cache ready. You can open the Tattoo Browser.");
+            ImGuiMCP::TextUnformatted("缩略图缓存就绪。可打开纹身浏览器。");
         else
-            ImGuiMCP::Text("Thumbnail Cache build complete: %zu / %zu (%zu failed)",
+            ImGuiMCP::Text("缩略图缓存构建完成:%zu / %zu (%zu 失败)",
                 buildStatus.completed, buildStatus.total, buildStatus.failed);
     }
     if (cacheBuildUnavailable)
-        ImGuiMCP::TextUnformatted("No tattoo textures found. Thumbnail Cache was not built.");
-    ImGuiMCP::Text("Thumbnail Cache: %.1f MiB used",
+        ImGuiMCP::TextUnformatted("未找到纹身贴图。缩略图缓存未构建。");
+    ImGuiMCP::Text("缩略图: 已用 %.1f MiB",
         static_cast<double>(thumbnails.diskCacheBytes()) / (1024.0 * 1024.0));
     if (!buildStatus.active && clearState != ThumbnailCacheClearState::pending &&
-        ImGuiMCP::Button("Clear Thumbnail Cache")) {
+        ImGuiMCP::Button("清除缩略图缓存")) {
         if (!thumbnails.requestDiskCacheClear())
             clearState = ThumbnailCacheClearState::failed;
         else
             clearState = thumbnails.diskCacheClearState();
     }
     if (clearState == ThumbnailCacheClearState::pending)
-        ImGuiMCP::TextUnformatted("Clearing thumbnail cache...");
+        ImGuiMCP::TextUnformatted("清除缩略图缓存...");
     else if (clearState == ThumbnailCacheClearState::failed)
-        ImGuiMCP::TextUnformatted("Could not clear the thumbnail cache.");
+        ImGuiMCP::TextUnformatted("无法清除缩略图缓存。");
     else if (clearState == ThumbnailCacheClearState::succeeded)
-        ImGuiMCP::TextUnformatted("Thumbnail cache cleared.");
+        ImGuiMCP::TextUnformatted("缩略图缓存已清。");
     return !buildStatus.active && clearState != ThumbnailCacheClearState::pending &&
-        ImGuiMCP::Button("Open Tattoo Browser");
+        ImGuiMCP::Button("打开纹身库");
 }
 
 void OfficialMenuFrameworkAdapter::renderFoundation(
@@ -3011,8 +3011,8 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                 ImGuiMCP::ImDrawListManager::AddRect(drawList, minimum, maximum,
                     overUi ? 0x70FFFFFF : 0xCCFFFFFF, 4.0F, 0, 1.5F);
                 const char* hint = io->KeyAlt
-                    ? "Alt+Drag: Pan | Alt+A/D: Orbit | Alt+W/S: Up/Down"
-                    : "Drag: Rotate | Alt+Drag: Pan | Wheel: Zoom";
+                    ? "Alt+拖:平移/Alt+A/D:环绕/Alt+W/S:升降"
+                    : "拖:转/Alt+拖:移/滚轮:缩放";
                 if (ImGuiMCP::CalcTextSize(hint).x * 0.65F + 16.0F <= frame.size.width) {
                     ImGuiMCP::ImDrawListManager::AddText(drawList,
                         ImGuiMCP::GetFont(), ImGuiMCP::GetFontSize() * 0.65F,
@@ -3043,13 +3043,13 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                 if (ImGuiMCP::Begin("##SlaveTatsCameraTools", nullptr, flags)) {
                     ImGuiMCP::SetWindowFontScale(0.7F);
                     static int focusIndex = 0;
-                    constexpr const char* names[]{"Whole body", "Face", "Body", "Hands", "Feet"};
+                    constexpr const char* names[]{"全身", "Face", "Body", "Hands", "Feet"};
                     ImGuiMCP::SetNextItemWidth(120.0F);
                     const bool changed = ImGuiMCP::Combo("##CameraFocus", &focusIndex, names, 5);
                     ImGuiMCP::SameLine();
-                    const bool center = ImGuiMCP::Button("Center");
+                    const bool center = ImGuiMCP::Button("中");
                     ImGuiMCP::SameLine();
-                    if (ImGuiMCP::Button("Reset View")) {
+                    if (ImGuiMCP::Button("复位")) {
                         input = {.reset = true, .frameCenterX = input.frameCenterX};
                         focusIndex = 0;
                     } else if (changed || center) {
@@ -3061,17 +3061,17 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                         const auto pan = currentPan();
                         const auto initial = panSettings->initialCameraPan(side);
                         if (pan) {
-                            ImGuiMCP::Text("Current Pan X %.1f  Y %.1f", pan->x, pan->y);
-                            ImGuiMCP::Text("Initial Pan X %.1f  Y %.1f", initial.x, initial.y);
-                            if (ImGuiMCP::Button("Use current Pan as initial")) {
+                            ImGuiMCP::Text("当前 X %.1f  Y %.1f", pan->x, pan->y);
+                            ImGuiMCP::Text("初始 X %.1f  Y %.1f", initial.x, initial.y);
+                            if (ImGuiMCP::Button("以当前平移为初始")) {
                                 panSaveFailed = !panSettings->setInitialCameraPan(
                                     side, {pan->x, pan->y});
                             }
                             if (ImGuiMCP::IsItemHovered()) {
-                                ImGuiMCP::SetTooltip("Applies when this side has no remembered session view.");
+                                ImGuiMCP::SetTooltip("当此侧无记忆会话视角时生效。");
                             }
                             if (panSaveFailed) {
-                                ImGuiMCP::TextUnformatted("Could not save initial Pan.");
+                                ImGuiMCP::TextUnformatted("无法保存初始平移");
                             }
                         }
                     }
@@ -3125,7 +3125,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
     bool open = true;
     ImGuiMCP::PushStyleVar(ImGuiMCP::ImGuiStyleVar_WindowBorderSize, 0.0F);
     ImGuiMCP::Begin(
-        "Tattoo Browser##SlaveTatsUI",
+        "纹身浏览##SlaveTatsUI",
         &open,
         ImGuiMCP::ImGuiWindowFlags_NoCollapse |
             ImGuiMCP::ImGuiWindowFlags_NoScrollbar |
@@ -3141,9 +3141,9 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
     }
     const auto targetLabel = formatSlotTargetLabel(
         workflow.actorTarget(), workflow.selectedArea(), workflow.targetSlot().value_or(-1));
-    ImGuiMCP::Text("Target: %s", targetLabel.c_str());
+    ImGuiMCP::Text("目标: %s", targetLabel.c_str());
 
-    if (ImGuiMCP::Button("Filters")) {
+    if (ImGuiMCP::Button("筛选")) {
         const auto filterButtonMin = ImGuiMCP::GetItemRectMin();
         const auto filterButtonMax = ImGuiMCP::GetItemRectMax();
         ImGuiMCP::SetNextWindowPos({filterButtonMin.x, filterButtonMax.y + 4.0F});
@@ -3151,12 +3151,12 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
     }
     ImGuiMCP::SameLine();
     if (ImGuiMCP::Button(backgroundMode == ThumbnailBackgroundMode::black
-                ? "Thumbnail BG: Black"
-                : "Thumbnail BG: White")) {
+                ? "缩略图底色:黑"
+                : "缩略图底色:白")) {
         backgroundMode = toggledThumbnailBackgroundMode(backgroundMode);
     }
     ImGuiMCP::SameLine();
-    ImGuiMCP::Text("%zu tattoos", model.scrollPage().matchedEntries);
+    ImGuiMCP::Text("%zu 纹身", model.scrollPage().matchedEntries);
 
     constexpr std::size_t searchCapacity = 256;
     std::array<char, searchCapacity> searchBuffer{};
@@ -3168,7 +3168,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
     std::vector<CatalogBrowserSourceOption> sourceOptions;
     std::vector<std::string> domainOptions;
     std::vector<const char*> domainLabels;
-    std::vector<const char*> sectionLabels{"All sections"};
+    std::vector<const char*> sectionLabels{"全部分类"};
     int domainIndex = 0;
     int sourceIndex = 0;
     int sectionIndex = 0;
@@ -3203,7 +3203,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         domainLabels.push_back(domainOptions.front().c_str());
     }
 
-    std::vector<const char*> sourceLabels{"All sources"};
+    std::vector<const char*> sourceLabels{"全来源"};
     sourceLabels.reserve(sourceOptions.size() + 1);
     for (const auto& source : sourceOptions) {
         sourceLabels.push_back(source.label.c_str());
@@ -3221,37 +3221,37 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Applied");
+        ImGuiMCP::TextUnformatted("已用");
         ImGuiMCP::TableSetColumnIndex(1);
         bool appliedOnly = workflow.appliedOnly();
-        if (ImGuiMCP::Checkbox("Applied only", &appliedOnly)) {
+        if (ImGuiMCP::Checkbox("仅已用", &appliedOnly)) {
             workflow.setAppliedOnly(appliedOnly);
         }
 
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Favorites");
+        ImGuiMCP::TextUnformatted("收藏");
         ImGuiMCP::TableSetColumnIndex(1);
         bool favoritesOnly = workflow.favoritesOnly();
-        if (ImGuiMCP::Checkbox("Favorites only", &favoritesOnly)) {
+        if (ImGuiMCP::Checkbox("仅收藏", &favoritesOnly)) {
             workflow.setFavoritesOnly(favoritesOnly);
         }
 
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Recent");
+        ImGuiMCP::TextUnformatted("最近");
         ImGuiMCP::TableSetColumnIndex(1);
         bool recentlyUsedOnly = workflow.recentlyUsedOnly();
-        if (ImGuiMCP::Checkbox("Recently used only", &recentlyUsedOnly)) {
+        if (ImGuiMCP::Checkbox("仅最近使用", &recentlyUsedOnly)) {
             workflow.setRecentlyUsedOnly(recentlyUsedOnly);
         }
 
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Material");
+        ImGuiMCP::TextUnformatted("材质");
         ImGuiMCP::TableSetColumnIndex(1);
         const float materialRowRight =
             ImGuiMCP::GetCursorScreenPos().x + ImGuiMCP::GetContentRegionAvail().x;
@@ -3263,36 +3263,36 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                 ImGuiMCP::CalcTextSize(label).x;
         };
         bool glowOnly = workflow.glowOnly();
-        if (ImGuiMCP::Checkbox("Glow only", &glowOnly)) {
+        if (ImGuiMCP::Checkbox("仅发光", &glowOnly)) {
             workflow.setGlowOnly(glowOnly);
         }
         if (catalogControlFitsOnSameLine(
                 materialRowRight,
                 ImGuiMCP::GetItemRectMax().x,
                 materialSpacing,
-                materialControlWidth("Bump only"))) {
+                materialControlWidth("仅凹凸"))) {
             ImGuiMCP::SameLine();
         }
         bool bumpOnly = workflow.bumpOnly();
-        if (ImGuiMCP::Checkbox("Bump only", &bumpOnly)) {
+        if (ImGuiMCP::Checkbox("仅凹凸", &bumpOnly)) {
             workflow.setBumpOnly(bumpOnly);
         }
         if (catalogControlFitsOnSameLine(
                 materialRowRight,
                 ImGuiMCP::GetItemRectMax().x,
                 materialSpacing,
-                materialControlWidth("Gloss only"))) {
+                materialControlWidth("仅光泽"))) {
             ImGuiMCP::SameLine();
         }
         bool glossOnly = workflow.glossOnly();
-        if (ImGuiMCP::Checkbox("Gloss only", &glossOnly)) {
+        if (ImGuiMCP::Checkbox("仅光泽", &glossOnly)) {
             workflow.setGlossOnly(glossOnly);
         }
 
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Domain");
+        ImGuiMCP::TextUnformatted("域");
         ImGuiMCP::TableSetColumnIndex(1);
         ImGuiMCP::SetNextItemWidth(-1.0F);
         if (ImGuiMCP::Combo(
@@ -3306,7 +3306,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Search");
+        ImGuiMCP::TextUnformatted("搜索");
         ImGuiMCP::TableSetColumnIndex(1);
         ImGuiMCP::SetNextItemWidth(-1.0F);
         if (ImGuiMCP::InputText("##Search", searchBuffer.data(), searchBuffer.size())) {
@@ -3316,7 +3316,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Source");
+        ImGuiMCP::TextUnformatted("来源");
         ImGuiMCP::TableSetColumnIndex(1);
         ImGuiMCP::SetNextItemWidth(-1.0F);
         if (ImGuiMCP::Combo(
@@ -3331,7 +3331,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         ImGuiMCP::TableNextRow();
         ImGuiMCP::TableSetColumnIndex(0);
         ImGuiMCP::AlignTextToFramePadding();
-        ImGuiMCP::TextUnformatted("Section");
+        ImGuiMCP::TextUnformatted("分类");
         ImGuiMCP::TableSetColumnIndex(1);
         ImGuiMCP::SetNextItemWidth(-1.0F);
         if (ImGuiMCP::Combo(
@@ -3355,16 +3355,16 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         workflow.favoritesOnly(),
         workflow.recentlyUsedOnly());
     if (const auto* favoriteError = workflow.favoriteError()) {
-        ImGuiMCP::Text("Favorites: %s", favoriteError->message.c_str());
+        ImGuiMCP::Text("收藏: %s", favoriteError->message.c_str());
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Button("Retry favorite save")) {
+        if (ImGuiMCP::Button("重试收藏保存")) {
             (void)workflow.retryFavorite();
         }
     }
     if (const auto* recentError = workflow.recentlyUsedError()) {
         ImGuiMCP::Text("Recently Used: %s", recentError->message.c_str());
         ImGuiMCP::SameLine();
-        if (ImGuiMCP::Button("Retry recent history")) {
+        if (ImGuiMCP::Button("重试最近记录")) {
             (void)workflow.retryRecentTattoo();
         }
     }
@@ -3439,7 +3439,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                     : nullptr;
 
                 const auto thumbnailWidgetId = catalogCardWidgetId(
-                    "Thumbnail", tattoo.sourceId, tattoo.sourceIndex);
+                    "缩略图", tattoo.sourceId, tattoo.sourceIndex);
 
                 ImGuiMCP::PushStyleColor(
                     ImGuiMCP::ImGuiCol_ChildBg,
@@ -3591,7 +3591,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
                     }
                 }
                 const auto nameWidgetId = catalogCardWidgetId(
-                    "Name", tattoo.sourceId, tattoo.sourceIndex);
+                    "名", tattoo.sourceId, tattoo.sourceIndex);
                 if (ImGuiMCP::BeginChild(
                         nameWidgetId.c_str(),
                         {0.0F, ImGuiMCP::GetTextLineHeightWithSpacing()},
@@ -3620,11 +3620,11 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
     if (slotRuntime.catalogPreviewActive()) {
         const auto selected = slotRuntime.catalogPreviewSelection();
         if (const auto* error = slotRuntime.catalogPreviewError()) {
-            ImGuiMCP::TextWrapped("Preview: %s", error->message.c_str());
+            ImGuiMCP::TextWrapped("预览: %s", error->message.c_str());
         } else if (selected) {
-            ImGuiMCP::Text("Selected: %s - not saved", selected->name.c_str());
+            ImGuiMCP::Text("已选: %s - 未保存", selected->name.c_str());
         } else {
-            ImGuiMCP::TextUnformatted("Click a tattoo to preview and select.");
+            ImGuiMCP::TextUnformatted("点击纹身以预览并选择。");
         }
         const auto displayed = slotRuntime.catalogPreviewDisplay();
         const auto ink = tattooColorComponents(displayed ? displayed->color : 0x000000);
@@ -3651,16 +3651,16 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
             slotRuntime.setCatalogPreviewGlossy(glossy);
         }
     } else if (slotRuntime.catalogPreviewStarting()) {
-        ImGuiMCP::TextUnformatted("Preparing live preview...");
+        ImGuiMCP::TextUnformatted("准备实时预览...");
     } else if (const auto* error = slotRuntime.catalogPreviewError()) {
-        ImGuiMCP::Text("Live preview unavailable: %s", error->message.c_str());
+        ImGuiMCP::Text("实时预览不可用: %s", error->message.c_str());
     }
     const float horizontalButtonPadding =
         style ? style->FramePadding.x * 2.0F : 16.0F;
     const float cancelButtonWidth =
-        ImGuiMCP::CalcTextSize("Cancel").x + horizontalButtonPadding;
+        ImGuiMCP::CalcTextSize("取消").x + horizontalButtonPadding;
     const float closeButtonWidth =
-        ImGuiMCP::CalcTextSize("Close").x + horizontalButtonPadding;
+        ImGuiMCP::CalcTextSize("关").x + horizontalButtonPadding;
     const float actionSpacing = style ? style->ItemSpacing.x : 8.0F;
     const float footerActionWidth =
         cancelButtonWidth + actionSpacing + closeButtonWidth;
@@ -3681,7 +3681,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         if (slotRuntime.catalogPreviewActive()) {
             const auto selected = slotRuntime.catalogPreviewSelection();
             ImGuiMCP::BeginDisabled(!selected);
-            if (ImGuiMCP::Button("Save Tattoo")) (void)slotRuntime.saveCatalogPreview();
+            if (ImGuiMCP::Button("存纹身")) (void)slotRuntime.saveCatalogPreview();
             ImGuiMCP::EndDisabled();
             ImGuiMCP::SameLine();
             if (ImGuiMCP::Button("Undo##CatalogPreview")) slotRuntime.undoCatalogPreview();
@@ -3692,7 +3692,7 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
             }
         } else if (!slotRuntime.catalogPreviewStarting() &&
                    slotRuntime.catalogPreviewError()) {
-            if (ImGuiMCP::Button("Retry Preview##CatalogPreviewBegin"))
+            if (ImGuiMCP::Button("重试预览##CatalogPreviewBegin"))
                 slotRuntime.retryCatalogPreview();
         }
 
@@ -3704,12 +3704,12 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
             actionSpacing);
         const float actionOriginX = ImGuiMCP::GetCursorPosX();
         ImGuiMCP::SetCursorPosX(actionOriginX + actionLayout.cancelX);
-        if (ImGuiMCP::Button("Cancel")) {
+        if (ImGuiMCP::Button("取消")) {
             if (!slotRuntime.closeCatalogPreview(false)) workflow.backToSlots();
         }
         ImGuiMCP::SameLine();
         ImGuiMCP::SetCursorPosX(actionOriginX + actionLayout.closeX);
-        if (ImGuiMCP::Button("Close")) {
+        if (ImGuiMCP::Button("关")) {
             if (!slotRuntime.closeCatalogPreview(true)) open = false;
         }
         ImGuiMCP::EndTable();

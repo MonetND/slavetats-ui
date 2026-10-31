@@ -1,4 +1,4 @@
-#include "native/NativeSlotWorkflowModel.h"
+﻿#include "native/NativeSlotWorkflowModel.h"
 
 #include <algorithm>
 #include <cmath>
@@ -11,16 +11,16 @@ namespace {
 std::string_view areaName(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:
-        return "BODY";
+        return "身";
     case core::TattooArea::face:
-        return "FACE";
+        return "脸";
     case core::TattooArea::hands:
-        return "HANDS";
+        return "手";
     case core::TattooArea::feet:
-        return "FEET";
+        return "足";
     }
 
-    return "BODY";
+    return "身";
 }
 
 char foldASCII(char value) noexcept {
@@ -341,11 +341,11 @@ void NativeSlotWorkflowModel::completeActorTargetResolution(
     }
     if (result->kind != ActorTargetKind::crosshair || result->formId == 0) {
         m_error = core::ServiceError{
-            core::ServiceErrorCode::actorNotFound, "No valid crosshair Actor"};
+            core::ServiceErrorCode::actorNotFound, "无有效准星角色"};
         return;
     }
     if (result->displayName.empty()) {
-        result->displayName = "Unnamed Actor";
+        result->displayName = "无名角色";
     }
     m_actorTarget = std::move(*result);
     m_error.reset();
@@ -1135,7 +1135,7 @@ bool NativeSlotWorkflowModel::requestCreateAppearancePreset(std::string name) {
     name = trimASCII(std::move(name));
     if (name.empty()) {
         m_appearancePresetError = runtime::ConfigError{
-            .message = "Appearance preset name must not be empty."};
+            .message = "外观预设名不能为空。"};
         return false;
     }
     runtime::AppearancePreset preset{
@@ -1158,7 +1158,7 @@ bool NativeSlotWorkflowModel::requestCreateAppearancePreset(std::string name) {
     }
     if (m_appearancePresets.size() >= runtime::kAppearancePresetLimit) {
         m_appearancePresetError = runtime::ConfigError{
-            .message = "Appearance preset limit reached."};
+            .message = "已达外观预设上限。"};
         return false;
     }
     return queueAppearancePresetRequest(AppearancePresetTicket{
@@ -1188,14 +1188,14 @@ bool NativeSlotWorkflowModel::requestRenameAppearancePreset(std::string newName)
     newName = trimASCII(std::move(newName));
     if (newName.empty()) {
         m_appearancePresetError = runtime::ConfigError{
-            .message = "Appearance preset name must not be empty."};
+            .message = "外观预设名不能为空。"};
         return false;
     }
     const auto selected = *m_selectedAppearancePreset;
     for (std::size_t index = 0; index < m_appearancePresets.size(); ++index) {
         if (index != selected && equalsFoldedASCII(m_appearancePresets[index].name, newName)) {
             m_appearancePresetError = runtime::ConfigError{
-                .message = "Appearance preset name already exists."};
+                .message = "外观预设名已存在。"};
             return false;
         }
     }
@@ -1544,7 +1544,7 @@ void NativeSlotWorkflowModel::completeSlotQuery(
     auto completed = std::move(result.value());
     if (completed.actorFormId != m_actorTarget->formId) {
         m_error = core::ServiceError{
-            core::ServiceErrorCode::slotQueryFailed, "Slot snapshot belongs to a different Actor"};
+            core::ServiceErrorCode::slotQueryFailed, "槽位快照属于其他角色"};
         return;
     }
     const auto completedArea = completed.area;

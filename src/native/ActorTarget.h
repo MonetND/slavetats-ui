@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "core/TattooModels.h"
 
@@ -19,7 +19,7 @@ enum class ActorTargetKind {
 struct ActorTarget {
     ActorTargetKind kind{ActorTargetKind::player};
     std::uint32_t formId{0x14};
-    std::string displayName{"Player"};
+    std::string displayName{"玩家"};
 };
 
 using ActorTargetResult = std::expected<ActorTarget, core::ServiceError>;

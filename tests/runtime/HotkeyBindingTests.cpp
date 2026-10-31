@@ -1,4 +1,4 @@
-#include "runtime/HotkeyBinding.h"
+﻿#include "runtime/HotkeyBinding.h"
 #include "runtime/PluginConfigFile.h"
 
 #include <filesystem>
@@ -47,7 +47,7 @@ void missingConfigurationDefaultsToNoHotkey() {
 
     expect(binding.load(), "expected missing configuration to be created");
     expect(!binding.key(), "expected no default hotkey");
-    expect(binding.label() == "None", "expected None label");
+    expect(binding.label() == "无", "expected None label");
 
     std::ifstream input(configPath);
     const auto json = nlohmann::json::parse(input);
@@ -58,7 +58,7 @@ void dropdownOptionsStartWithNoneAndExposeKeyboardKeys() {
     const auto options = stui::runtime::hotkeyOptions();
 
     expect(!options.empty(), "expected hotkey dropdown options");
-    expect(options.front().label == "None", "expected None to be the first option");
+    expect(options.front().label == "无", "expected None to be the first option");
     expect(!options.front().key, "expected None to disable the hotkey");
 
     const auto f8 = std::ranges::find(options, std::string_view("F8"), &stui::runtime::HotkeyOption::label);

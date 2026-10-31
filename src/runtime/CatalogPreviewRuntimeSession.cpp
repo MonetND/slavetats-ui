@@ -1,4 +1,4 @@
-#include "runtime/CatalogPreviewRuntimeSession.h"
+﻿#include "runtime/CatalogPreviewRuntimeSession.h"
 
 #include <algorithm>
 #include <ranges>
@@ -30,33 +30,33 @@ std::expected<CatalogPreviewRuntimeSession::SlotFingerprint, core::ServiceError>
 CatalogPreviewRuntimeSession::validateSlot(
     const core::CatalogPreviewContext& context) const {
     if (!m_query) return std::unexpected(previewError(
-        core::ServiceErrorCode::previewUnavailable, "Catalog preview slot query is unavailable"));
+        core::ServiceErrorCode::previewUnavailable, "目录预览槽位查询不可用"));
     auto slots=m_query(context.actorFormId,context.area);
     if (!slots) return std::unexpected(slots.error());
     if (slots->actorFormId!=context.actorFormId || slots->area!=context.area) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview Actor or area changed"));
+            "目录预览角色或区域已变"));
     }
     const auto found=std::ranges::find_if(slots->slots,[&](const core::TattooSlot& slot) {
         return slot.index==context.slot;
     });
     if (found==slots->slots.end()) return std::unexpected(previewError(
-        core::ServiceErrorCode::invalidSlot,"Catalog preview slot is unavailable"));
+        core::ServiceErrorCode::invalidSlot,"目录预览槽位不可用"));
     if (found->occupancy==core::SlotOccupancy::external) return std::unexpected(previewError(
-        core::ServiceErrorCode::externalSlot,"External slots cannot be previewed"));
+        core::ServiceErrorCode::externalSlot,"外部槽位无法预览"));
     if (found->occupancy!=core::SlotOccupancy::empty &&
         found->occupancy!=core::SlotOccupancy::slaveTats) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview slot occupancy is unknown"));
+            "目录预览槽位占用未知"));
     }
     if ((found->occupancy==core::SlotOccupancy::slaveTats &&
             (!found->tattoo || !found->tattoo->runtimeHandle)) ||
         (found->occupancy==core::SlotOccupancy::empty && found->tattoo)) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview slot snapshot is inconsistent"));
+            "目录预览槽位快照不一致"));
     }
     if (found->tattoo && found->tattoo->locked) return std::unexpected(previewError(
-        core::ServiceErrorCode::previewConflict,"Locked slots cannot be previewed"));
+        core::ServiceErrorCode::previewConflict,"锁定槽位无法预览"));
     return SlotFingerprint{
         .occupancy=found->occupancy,
         .tattoo=found->tattoo,
@@ -72,13 +72,13 @@ bool CatalogPreviewRuntimeSession::matchesActive(
 core::CatalogPreviewBeginResult CatalogPreviewRuntimeSession::begin(
     const core::CatalogPreviewBeginRequest& request) {
     if (m_context || m_synchronizationRetry) return std::unexpected(previewError(
-        core::ServiceErrorCode::previewConflict,"A catalog preview session is already active"));
+        core::ServiceErrorCode::previewConflict,"已有目录预览会话激活"));
     auto slot=validateSlot(request);
     if (!slot) return std::unexpected(slot.error());
     auto visual=std::make_unique<CatalogPreviewVisualSession>(m_visualBindings);
     if (!visual->begin(visualContext(request))) return std::unexpected(previewError(
         core::ServiceErrorCode::previewUnavailable,
-        "The selected slot does not support nonpersistent preview"));
+        "所选槽位不支持非持久预览"));
     m_context=request;
     m_originalSlot=*slot;
     m_visual=std::move(visual);
@@ -91,17 +91,17 @@ core::CatalogPreviewPaintResult CatalogPreviewRuntimeSession::paint(
     const core::CatalogPreviewPaintRequest& request) {
     if (!matchesActive(request.sessionId,request.context) || !m_visual || !m_originalSlot) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview session is stale"));
+            "目录预览会话已过期"));
     }
     auto slot=validateSlot(request.context);
     if (!slot || *slot!=*m_originalSlot) return std::unexpected(previewError(
-        core::ServiceErrorCode::previewConflict,"The selected slot changed during preview"));
+        core::ServiceErrorCode::previewConflict,"预览期间所选槽位已变"));
     const bool painted = request.candidate
         ? m_visual->paint(visualContext(request.context), *request.candidate)
         : m_visual->clear(visualContext(request.context));
     if (!painted) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewFailed,
-            "Catalog preview paint failed"));
+            "目录预览绘制失败"));
     }
     return core::CatalogPreviewPaintSuccess{};
 }
@@ -110,16 +110,16 @@ core::CatalogPreviewRestoreResult CatalogPreviewRuntimeSession::restore(
     const core::CatalogPreviewRestoreRequest& request) {
     if (!matchesActive(request.sessionId,request.context) || !m_visual || !m_originalSlot) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview session is stale"));
+            "目录预览会话已过期"));
     }
     if (m_visual->restorePending()) {
         auto slot=validateSlot(request.context);
         if (!slot || *slot!=*m_originalSlot) return std::unexpected(previewError(
-            core::ServiceErrorCode::previewConflict,"The selected slot changed during preview"));
+            core::ServiceErrorCode::previewConflict,"预览期间所选槽位已变"));
     }
     if (!m_visual->restore(visualContext(request.context))) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewFailed,
-            "Catalog preview restore failed"));
+            "目录预览恢复失败"));
     }
     invalidate();
     return core::CatalogPreviewRestoreSuccess{};
@@ -132,7 +132,7 @@ core::CatalogPreviewCommitResult CatalogPreviewRuntimeSession::commit(
         request.apply.area != request.context.area ||
         request.apply.slot != request.context.slot) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview Save does not match its Actor and slot"));
+            "目录预览保存与其角色和槽位不匹配"));
     }
 
     if (request.apply.mode == core::ApplyTattooMode::synchronizeOnly) {
@@ -140,13 +140,13 @@ core::CatalogPreviewCommitResult CatalogPreviewRuntimeSession::commit(
             m_synchronizationRetry->sessionId != request.sessionId ||
             m_synchronizationRetry->context != request.context) {
             return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-                "No matching catalog preview synchronization retry exists"));
+                "无匹配的目录预览同步重试"));
         }
         auto original = request.apply;
         original.mode = core::ApplyTattooMode::applyAndSynchronize;
         if (original != m_synchronizationRetry->apply) {
             return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-                "Catalog preview synchronization retry changed its Save intent"));
+                "目录预览同步重试改变了保存意图"));
         }
         auto result = m_apply(request.apply);
         if (result) m_synchronizationRetry.reset();
@@ -156,16 +156,16 @@ core::CatalogPreviewCommitResult CatalogPreviewRuntimeSession::commit(
     if (m_synchronizationRetry || !matchesActive(request.sessionId, request.context) ||
         !m_visual || !m_originalSlot) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "Catalog preview session is stale"));
+            "目录预览会话已过期"));
     }
     auto slot = validateSlot(request.context);
     if (!slot || *slot != *m_originalSlot) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "The selected slot changed before Save"));
+            "保存前所选槽位已变"));
     }
     if (!m_visual->targetStillStable(visualContext(request.context))) {
         return std::unexpected(previewError(core::ServiceErrorCode::previewConflict,
-            "The previewed Actor material changed before Save"));
+            "保存前预览角色材质已变"));
     }
     auto result = m_apply(request.apply);
     if (result || result.error().mutationSideEffect != core::MutationSideEffect::none) {

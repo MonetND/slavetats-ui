@@ -1,4 +1,4 @@
-#include "runtime/SlaveTatsRuntime.h"
+﻿#include "runtime/SlaveTatsRuntime.h"
 
 #include "jcontainers_mini.h"
 #include "runtime/SlaveTatsAlpha.h"
@@ -41,13 +41,13 @@ private:
 const char* areaName(core::TattooArea area) noexcept {
     switch (area) {
     case core::TattooArea::body:
-        return "BODY";
+        return "身";
     case core::TattooArea::face:
-        return "FACE";
+        return "脸";
     case core::TattooArea::hands:
-        return "HANDS";
+        return "手";
     case core::TattooArea::feet:
-        return "FEET";
+        return "足";
     }
 
     return nullptr;
@@ -424,7 +424,7 @@ core::TattooSlotsResult SlaveTatsRuntime::querySlots(
     if (!actor) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
     return querySlotsForActor(actorFormId, area, actor);
@@ -517,7 +517,7 @@ core::ApplyTattooResult SlaveTatsRuntime::applyToSlot(const core::ApplyTattooReq
     if (!actor) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -541,7 +541,7 @@ core::ApplyTattooResult SlaveTatsRuntime::applyToSlot(const core::ApplyTattooReq
         if (externalSlots->contains(request.slot)) {
             return std::unexpected(core::ServiceError{
                 core::ServiceErrorCode::externalSlot,
-                "Slot is occupied by an external overlay",
+                "槽位被外部覆盖占用",
             });
         }
 
@@ -574,7 +574,7 @@ core::ApplyTattooResult SlaveTatsRuntime::applyToSlot(const core::ApplyTattooReq
         if (tattooHandle == 0) {
             return std::unexpected(core::ServiceError{
                 core::ServiceErrorCode::tattooNotFound,
-                "Tattoo not found in available list",
+                "可用列表中未找到纹身",
             });
         }
 
@@ -619,7 +619,7 @@ core::ApplyTattooResult SlaveTatsRuntime::applyToSlot(const core::ApplyTattooReq
                 request.slot);
             return std::unexpected(core::ServiceError{
                 core::ServiceErrorCode::applyFailed,
-                "Failed to apply tattoo to slot",
+                "无法将纹身应用到槽位",
             });
         }
     }
@@ -628,7 +628,7 @@ core::ApplyTattooResult SlaveTatsRuntime::applyToSlot(const core::ApplyTattooReq
     if (m_api->synchronize_tattoos(actor, false)) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::synchronizeFailed,
-            "Tattoo applied but synchronization failed",
+            "纹身已应用但同步失败",
             request.mode == core::ApplyTattooMode::applyAndSynchronize
                 ? core::MutationSideEffect::mayHaveOccurred
                 : core::MutationSideEffect::none,
@@ -650,7 +650,7 @@ core::RemoveTattooResult SlaveTatsRuntime::removeFromSlot(
     if (!actor) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -674,7 +674,7 @@ core::RemoveTattooResult SlaveTatsRuntime::removeFromSlot(
         if (externalSlots->contains(request.slot)) {
             return std::unexpected(core::ServiceError{
                 core::ServiceErrorCode::externalSlot,
-                "Slot is occupied by an external overlay",
+                "槽位被外部覆盖占用",
             });
         }
 
@@ -686,7 +686,7 @@ core::RemoveTattooResult SlaveTatsRuntime::removeFromSlot(
                 false)) {
             return std::unexpected(core::ServiceError{
                 core::ServiceErrorCode::removeFailed,
-                "Failed to remove tattoo from slot",
+                "无法从槽位移除纹身",
             });
         }
     }
@@ -695,7 +695,7 @@ core::RemoveTattooResult SlaveTatsRuntime::removeFromSlot(
     if (m_api->synchronize_tattoos(actor, false)) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::synchronizeFailed,
-            "Tattoo removed but synchronization failed",
+            "纹身已移除但同步失败",
         });
     }
 
@@ -734,7 +734,7 @@ core::SetTattooLockedResult SlaveTatsRuntime::setTattooLocked(
     if (!actorHandle) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
@@ -792,7 +792,7 @@ core::SetTattooLockedResult SlaveTatsRuntime::setTattooLocked(
         wrote = jcmini::JMap::setIntAndVerify(request.runtimeHandle, "locked", value);
     }
     if (!wrote) {
-        return lockFailed("Failed to update tattoo lock state");
+        return lockFailed("无法更新纹身锁定状态");
     }
 
     return core::SetTattooLockedSuccess{
@@ -814,7 +814,7 @@ core::CaptureTattooLoadoutResult SlaveTatsRuntime::captureLoadout(
     auto* actor = resolveLoadedActor(request.actorFormId);
     if (!actor) {
         return std::unexpected(core::ServiceError{
-            core::ServiceErrorCode::actorNotFound, "Actor not found"});
+            core::ServiceErrorCode::actorNotFound, "未找到角色"});
     }
 
     for (const auto area : areas) {
@@ -877,7 +877,7 @@ core::TattooLoadoutPlanResult SlaveTatsRuntime::preflight(
         return std::unexpected(std::vector<core::TattooLoadoutBlocker>{{
             .code = core::TattooLoadoutBlockerCode::actorMismatch,
             .slot = -1,
-            .message = "Actor not found",
+            .message = "未找到角色",
         }});
     }
     for (std::size_t index = 0; index < areas.size(); ++index) {
@@ -952,7 +952,7 @@ std::expected<void, core::ServiceError> SlaveTatsRuntime::applyAction(
     const char* area = areaName(action.area);
     if (!actor) {
         return std::unexpected(core::ServiceError{
-            core::ServiceErrorCode::actorNotFound, "Actor not found"});
+            core::ServiceErrorCode::actorNotFound, "未找到角色"});
     }
     if (!area) {
         return std::unexpected(core::ServiceError{
@@ -997,7 +997,7 @@ std::expected<void, core::ServiceError> SlaveTatsRuntime::applyAction(
         if (templateHandle == 0) {
             return std::unexpected(core::ServiceError{
                 core::ServiceErrorCode::tattooNotFound,
-                "Tattoo disappeared after loadout Preflight"});
+                "预检后纹身消失"});
         }
         const TattooTemplateAppearanceGuard appearance(
             templateHandle, desired.color, desired.alpha);
@@ -1021,7 +1021,7 @@ std::expected<void, core::ServiceError> SlaveTatsRuntime::applyAction(
     if (!handles || std::ranges::find(*handles, runtimeHandle) == handles->end()) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::staleTattooHandle,
-            "Tattoo handle became stale during loadout restore",
+            "恢复配置时纹身手柄失效",
             core::MutationSideEffect::mayHaveOccurred,
         });
     }

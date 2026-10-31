@@ -1,4 +1,4 @@
-#include "native/NativeSlotWorkflowRuntime.h"
+﻿#include "native/NativeSlotWorkflowRuntime.h"
 
 #include <expected>
 #include <utility>
@@ -336,7 +336,7 @@ void NativeSlotWorkflowRuntime::scheduleCatalogPreviewBegin(
         if (epoch != m_catalogPreviewEpoch) return;
         core::CatalogPreviewBeginResult result = std::unexpected(operationError(
             core::ServiceErrorCode::previewUnavailable,
-            "Catalog preview is unavailable."));
+            "目录预览不可用。"));
         try { result = m_catalogPreviewBegin(context); } catch (...) {}
         m_catalogPreviewBeginPending = false;
         if (!result) {
@@ -367,7 +367,7 @@ void NativeSlotWorkflowRuntime::scheduleCatalogPreviewBegin(
         m_catalogPreviewBeginPending = false;
         m_model.setCatalogPreviewActive(false);
         m_catalogPreviewError = operationError(core::ServiceErrorCode::previewUnavailable,
-            "Failed to schedule catalog preview.");
+            "无法安排目录预览。");
         m_inFlight.store(false);
     }
 }
@@ -383,7 +383,7 @@ void NativeSlotWorkflowRuntime::scheduleCatalogPreviewPaint(CatalogPreviewPaint 
         const core::CatalogPreviewContext context{paint.context.actorFormId,
             paint.context.generation, paint.context.area, paint.context.slot};
         core::ServiceError error = operationError(core::ServiceErrorCode::previewFailed,
-            "Catalog preview update failed.");
+            "目录预览更新失败。");
         bool success = false;
         try {
             if (closing) {
@@ -420,7 +420,7 @@ void NativeSlotWorkflowRuntime::scheduleCatalogPreviewPaint(CatalogPreviewPaint 
     catch (...) {
         m_catalogPreviewModel.completePaint(paint, false);
         m_catalogPreviewError = operationError(core::ServiceErrorCode::previewFailed,
-            "Failed to schedule catalog preview update.");
+            "无法安排目录预览更新。");
         m_inFlight.store(false);
     }
 }
@@ -433,7 +433,7 @@ void NativeSlotWorkflowRuntime::scheduleCatalogPreviewCommit(CatalogPreviewCommi
         InFlightGuard guard(m_inFlight);
         if (epoch != m_catalogPreviewEpoch) return;
         core::CatalogPreviewCommitResult result = std::unexpected(operationError(
-            core::ServiceErrorCode::applyFailed, "Catalog preview Save failed."));
+            core::ServiceErrorCode::applyFailed, "目录预览保存失败。"));
         try {
             if (m_catalogPreviewCommit) result = m_catalogPreviewCommit(request);
         } catch (...) {}
@@ -463,7 +463,7 @@ void NativeSlotWorkflowRuntime::scheduleCatalogPreviewCommit(CatalogPreviewCommi
     catch (...) {
         m_catalogPreviewModel.completeCommit(commit, false, false);
         m_catalogPreviewError = operationError(core::ServiceErrorCode::applyFailed,
-            "Failed to schedule catalog preview Save.");
+            "无法安排目录预览保存。");
         m_inFlight.store(false);
     }
 }
@@ -532,7 +532,7 @@ void NativeSlotWorkflowRuntime::scheduleActorTarget(ActorTargetResolutionTicket 
         InFlightGuard guard(m_inFlight);
         ActorTargetResult result = std::unexpected(operationError(
             core::ServiceErrorCode::actorNotFound,
-            "Failed to resolve crosshair Actor."));
+            "无法解析准星角色。"));
         try {
             result = m_resolveActorTarget();
         } catch (...) {
@@ -547,7 +547,7 @@ void NativeSlotWorkflowRuntime::scheduleActorTarget(ActorTargetResolutionTicket 
             ticket.generation,
             std::unexpected(operationError(
                 core::ServiceErrorCode::actorNotFound,
-                "Failed to resolve crosshair Actor.")));
+                "无法解析准星角色。")));
         m_inFlight.store(false);
     }
 }
@@ -557,7 +557,7 @@ void NativeSlotWorkflowRuntime::scheduleNearbyActorScan(NearbyActorScanTicket ti
         InFlightGuard guard(m_inFlight);
         NearbyActorScanResult result = std::unexpected(operationError(
             core::ServiceErrorCode::actorNotFound,
-            "Failed to scan nearby Actors."));
+            "无法扫描附近角色。"));
         try {
             if (m_scanNearbyActors) {
                 result = m_scanNearbyActors();
@@ -574,7 +574,7 @@ void NativeSlotWorkflowRuntime::scheduleNearbyActorScan(NearbyActorScanTicket ti
             ticket.generation,
             NearbyActorScanResult(std::unexpected(operationError(
                 core::ServiceErrorCode::actorNotFound,
-                "Failed to scan nearby Actors."))));
+                "无法扫描附近角色。"))));
         m_inFlight.store(false);
     }
 }
@@ -584,7 +584,7 @@ void NativeSlotWorkflowRuntime::scheduleLoadedActorScan(LoadedActorScanTicket ti
         InFlightGuard guard(m_inFlight);
         LoadedActorScanResult result = std::unexpected(operationError(
             core::ServiceErrorCode::actorNotFound,
-            "Failed to scan loaded Actors."));
+            "扫描已载角色失败。"));
         try {
             if (m_scanLoadedActors) result = m_scanLoadedActors();
         } catch (...) {
@@ -599,7 +599,7 @@ void NativeSlotWorkflowRuntime::scheduleLoadedActorScan(LoadedActorScanTicket ti
             ticket.generation,
             LoadedActorScanResult(std::unexpected(operationError(
                 core::ServiceErrorCode::actorNotFound,
-                "Failed to schedule loaded Actor scan."))));
+                "无法安排已载角色扫描。"))));
         m_inFlight.store(false);
     }
 }
@@ -609,7 +609,7 @@ void NativeSlotWorkflowRuntime::scheduleQuery(SlotQueryTicket ticket) {
         InFlightGuard guard(m_inFlight);
         core::TattooSlotsResult result = std::unexpected(operationError(
             core::ServiceErrorCode::slotQueryFailed,
-            "Slot query failed."));
+            "槽查询失败。"));
         try {
             result = m_query(ticket.actorFormId, ticket.area);
         } catch (...) {
@@ -624,7 +624,7 @@ void NativeSlotWorkflowRuntime::scheduleQuery(SlotQueryTicket ticket) {
             ticket.generation,
             std::unexpected(operationError(
                 core::ServiceErrorCode::slotQueryFailed,
-                "Failed to schedule slot query.")));
+                "无法安排槽位查询。")));
         m_inFlight.store(false);
     }
 }
@@ -635,7 +635,7 @@ void NativeSlotWorkflowRuntime::scheduleApply(SlotApplyTicket ticket) {
         InFlightGuard guard(m_inFlight);
         core::ApplyTattooResult result = std::unexpected(operationError(
             core::ServiceErrorCode::applyFailed,
-            "Tattoo apply failed."));
+            "纹身应用失败"));
         try {
             result = m_apply(ticket.request);
         } catch (...) {
@@ -650,7 +650,7 @@ void NativeSlotWorkflowRuntime::scheduleApply(SlotApplyTicket ticket) {
             generation,
             std::unexpected(operationError(
                 core::ServiceErrorCode::applyFailed,
-                "Failed to schedule tattoo apply.")));
+                "无法安排纹身应用。")));
         m_inFlight.store(false);
     }
 }
@@ -661,7 +661,7 @@ void NativeSlotWorkflowRuntime::scheduleRemove(SlotRemoveTicket ticket) {
         InFlightGuard guard(m_inFlight);
         core::RemoveTattooResult result = std::unexpected(operationError(
             core::ServiceErrorCode::removeFailed,
-            "Tattoo remove failed."));
+            "纹身移除失败。"));
         try {
             result = m_remove(ticket.request);
         } catch (...) {
@@ -676,7 +676,7 @@ void NativeSlotWorkflowRuntime::scheduleRemove(SlotRemoveTicket ticket) {
             generation,
             std::unexpected(operationError(
                 core::ServiceErrorCode::removeFailed,
-                "Failed to schedule tattoo remove.")));
+                "无法安排纹身移除。")));
         m_inFlight.store(false);
     }
 }
@@ -689,7 +689,7 @@ void NativeSlotWorkflowRuntime::scheduleAppearance(SlotAppearanceTicket ticket) 
         InFlightGuard guard(m_inFlight);
         core::UpdateTattooAppearanceResult result = std::unexpected(appearanceOperationError(
             errorCode,
-            "Tattoo appearance update failed.",
+            "纹身外观更新失败。",
             mode));
         try {
             result = m_updateAppearance(ticket.request);
@@ -705,7 +705,7 @@ void NativeSlotWorkflowRuntime::scheduleAppearance(SlotAppearanceTicket ticket) 
             generation,
             std::unexpected(operationError(
                 errorCode,
-                "Failed to schedule tattoo appearance update.")));
+                "无法安排纹身外观更新。")));
         m_inFlight.store(false);
     }
 }
@@ -716,7 +716,7 @@ void NativeSlotWorkflowRuntime::scheduleLock(SlotLockTicket ticket) {
         InFlightGuard guard(m_inFlight);
         core::SetTattooLockedResult result = std::unexpected(operationError(
             core::ServiceErrorCode::lockFailed,
-            "Tattoo lock state update failed."));
+            "纹身锁定更新失败。"));
         try {
             result = m_setLocked(ticket.request);
         } catch (...) {
@@ -730,7 +730,7 @@ void NativeSlotWorkflowRuntime::scheduleLock(SlotLockTicket ticket) {
             generation,
             std::unexpected(operationError(
                 core::ServiceErrorCode::lockFailed,
-                "Failed to schedule tattoo lock state update.")));
+                "无法安排纹身锁定更新。")));
         m_inFlight.store(false);
     }
 }
@@ -740,7 +740,7 @@ void NativeSlotWorkflowRuntime::scheduleFavorite(FavoriteTicket ticket) {
     NativeSlotTask task = [this, ticket = std::move(ticket)] {
         InFlightGuard guard(m_inFlight);
         runtime::FavoriteResult result = std::unexpected(runtime::ConfigError{
-            .message = "Favorite storage operation failed."});
+            .message = "收藏存储操作失败。"});
         try {
             if (!m_favoriteOperation) {
                 result = std::unexpected(runtime::ConfigError{
@@ -759,7 +759,7 @@ void NativeSlotWorkflowRuntime::scheduleFavorite(FavoriteTicket ticket) {
         {
             const std::scoped_lock lock(m_favoriteCompletionMutex);
             m_favoriteCompletions.emplace_back(requestId, std::unexpected(runtime::ConfigError{
-                .message = "Failed to schedule favorite storage."}));
+                .message = "无法安排收藏存储。"}));
         }
         m_inFlight.store(false);
     }
@@ -770,7 +770,7 @@ void NativeSlotWorkflowRuntime::scheduleRecentTattoo(RecentTattooTicket ticket) 
     NativeSlotTask task = [this, ticket = std::move(ticket)] {
         InFlightGuard guard(m_inFlight);
         runtime::RecentTattooResult result = std::unexpected(runtime::ConfigError{
-            .message = "Recent tattoo storage operation failed."});
+            .message = "最近纹身存储操作失败。"});
         try {
             if (ticket.kind == RecentTattooRequestKind::load) {
                 if (m_recentTattooLoadOperation) {
@@ -796,7 +796,7 @@ void NativeSlotWorkflowRuntime::scheduleRecentTattoo(RecentTattooTicket ticket) 
         {
             const std::scoped_lock lock(m_recentTattooCompletionMutex);
             m_recentTattooCompletions.emplace_back(requestId, std::unexpected(
-                runtime::ConfigError{.message = "Failed to schedule recent tattoo storage."}));
+                runtime::ConfigError{.message = "无法安排最近纹身存储。"}));
         }
         m_inFlight.store(false);
     }
@@ -807,7 +807,7 @@ void NativeSlotWorkflowRuntime::scheduleAppearancePreset(AppearancePresetTicket 
     NativeSlotTask task = [this, ticket = std::move(ticket)] {
         InFlightGuard guard(m_inFlight);
         runtime::AppearancePresetResult result = std::unexpected(runtime::ConfigError{
-            .message = "Appearance preset storage operation failed."});
+            .message = "外观预设存储操作失败。"});
         try {
             if (m_appearancePresetOperation) {
                 result = m_appearancePresetOperation(ticket);
@@ -827,7 +827,7 @@ void NativeSlotWorkflowRuntime::scheduleAppearancePreset(AppearancePresetTicket 
             const std::scoped_lock lock(m_appearancePresetCompletionMutex);
             m_appearancePresetCompletions.emplace_back(requestId, std::unexpected(
                 runtime::ConfigError{
-                    .message = "Failed to schedule appearance preset storage."}));
+                    .message = "无法安排外观预设存储。"}));
         }
         m_inFlight.store(false);
     }
@@ -839,13 +839,13 @@ void NativeSlotWorkflowRuntime::scheduleTattooLoadoutStore(
     NativeSlotTask task = [this, ticket = std::move(ticket)] {
         InFlightGuard guard(m_inFlight);
         runtime::TattooLoadoutResult result = std::unexpected(runtime::ConfigError{
-            .message = "Tattoo loadout storage operation failed."});
+            .message = "纹身配置存储操作失败。"});
         try {
             if (m_tattooLoadoutStoreOperation) {
                 result = m_tattooLoadoutStoreOperation(ticket);
             } else {
                 result = std::unexpected(runtime::ConfigError{
-                    .message = "Tattoo loadout storage is unavailable."});
+                    .message = "纹身配置存储不可用。"});
             }
         } catch (...) {
         }
@@ -860,7 +860,7 @@ void NativeSlotWorkflowRuntime::scheduleTattooLoadoutStore(
             m_tattooLoadoutStoreCompletions.emplace_back(
                 requestId,
                 std::unexpected(runtime::ConfigError{
-                    .message = "Failed to schedule tattoo loadout storage."}));
+                    .message = "无法安排纹身配置存储。"}));
         }
         m_inFlight.store(false);
     }
@@ -874,7 +874,7 @@ void NativeSlotWorkflowRuntime::scheduleTattooLoadoutActor(
         InFlightGuard guard(m_inFlight);
         const auto error = core::ServiceError{
             .code = core::ServiceErrorCode::applyFailed,
-            .message = "Tattoo loadout Actor operation failed.",
+            .message = "纹身配置角色操作失败。",
         };
         const std::scoped_lock lock(m_tattooLoadoutCompletionMutex);
         try {
@@ -937,7 +937,7 @@ void NativeSlotWorkflowRuntime::scheduleTattooLoadoutActor(
     } catch (...) {
         const auto error = core::ServiceError{
             .code = core::ServiceErrorCode::applyFailed,
-            .message = "Failed to schedule tattoo loadout Actor operation.",
+            .message = "无法安排纹身配置角色操作。",
         };
         {
             const std::scoped_lock lock(m_tattooLoadoutCompletionMutex);

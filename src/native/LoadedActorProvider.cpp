@@ -1,4 +1,4 @@
-#include "native/LoadedActorProvider.h"
+﻿#include "native/LoadedActorProvider.h"
 
 #include <RE/Skyrim.h>
 
@@ -10,7 +10,7 @@ namespace {
 LoadedActorScanResult unavailable() {
     return std::unexpected(core::ServiceError{
         .code = core::ServiceErrorCode::actorNotFound,
-        .message = "Explicit NPC scan is unavailable.",
+        .message = "指定NPC扫描不可用。",
     });
 }
 
@@ -38,7 +38,7 @@ LoadedActorScanResult scanLoadedActors() {
             .target = ActorTarget{
                 .kind = ActorTargetKind::explicitNpc,
                 .formId = actor->GetFormID(),
-                .displayName = displayName && *displayName ? displayName : "Unnamed Actor",
+                .displayName = displayName && *displayName ? displayName : "无名角色",
             },
             .distance = distance,
             .isPlayerTeammate = actor->IsPlayerTeammate(),

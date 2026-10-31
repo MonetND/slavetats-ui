@@ -1,4 +1,4 @@
-#include "native/NativeCatalogBrowserModel.h"
+﻿#include "native/NativeCatalogBrowserModel.h"
 #include "repository/FavoriteIdentity.h"
 
 #include <exception>
@@ -319,7 +319,7 @@ void filtersRecentlyUsedInNewestFirstOrder() {
 
     expect(model.recentlyUsedOnly() && model.page().matchedEntries == 2 &&
             model.page().entries[0].name == "Beta" &&
-            model.page().entries[1].name == "Alpha",
+            model.page().entries[1].name == "透",
         "expected Recently Used filter to preserve newest-first history order");
 }
 

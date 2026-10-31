@@ -1,4 +1,4 @@
-#include "native/NativeSlotWorkflowModel.h"
+﻿#include "native/NativeSlotWorkflowModel.h"
 
 #include <chrono>
 #include <exception>
@@ -918,7 +918,7 @@ void staleCompletionsAreIgnored() {
         "expected current FACE completion accepted");
 
     expect(model.selectSlot(1), "expected FACE target selected");
-    model.selectTattoo(tattoo("Face Mark", 1, "FACE"));
+    model.selectTattoo(tattoo("Face Mark", 1, "脸"));
     expect(model.confirmApply(), "expected stale-completion confirmation accepted");
     const auto apply = model.takeApplyRequest();
     model.completeApply(apply->generation + 1, ApplyTattooSuccess{});
@@ -1858,7 +1858,7 @@ void explicitPlayerAndCrosshairResolutionNeverFallback() {
     NativeCatalogBrowserModel catalog([&snapshot] { return snapshot; });
     NativeSlotWorkflowModel model(catalog);
     expect(model.actorTarget() && model.actorTarget()->formId == 0x14 &&
-            model.actorTarget()->displayName == "Player" &&
+            model.actorTarget()->displayName == "玩家" &&
             model.selectedTargetKind() == ActorTargetKind::player,
         "expected explicit Player identity at startup");
     expect(!model.refreshCrosshairTarget(), "expected no Crosshair refresh in Player mode");
@@ -1873,9 +1873,9 @@ void explicitPlayerAndCrosshairResolutionNeverFallback() {
     model.selectArea(TattooArea::face);
     expect(!model.takeSlotQuery() && !model.selectSlot(0), "expected no work without Actor");
     model.completeActorTargetResolution(target->generation, std::unexpected(ServiceError{
-        ServiceErrorCode::actorNotFound, "No valid crosshair Actor"}));
+        ServiceErrorCode::actorNotFound, "无有效准星角色"}));
     expect(!model.actorTarget() && !model.isActorTargetResolutionInFlight() &&
-            model.error() && model.error()->message == "No valid crosshair Actor" &&
+            model.error() && model.error()->message == "无有效准星角色" &&
             !model.takeSlotQuery(), "expected provider error without Player fallback");
     expect(model.refreshCrosshairTarget(), "expected deliberate Crosshair retry");
     const auto retry = model.takeActorTargetRequest();
@@ -1906,7 +1906,7 @@ void explicitPlayerAndCrosshairResolutionNeverFallback() {
     const auto unnamed = model.takeActorTargetRequest();
     model.completeActorTargetResolution(unnamed->generation,
         ActorTarget{ActorTargetKind::crosshair, 0x1234, ""});
-    expect(model.actorTarget() && model.actorTarget()->displayName == "Unnamed Actor",
+    expect(model.actorTarget() && model.actorTarget()->displayName == "无名角色",
         "expected nonempty presentation metadata for a valid unnamed Actor");
 }
 
@@ -1924,7 +1924,7 @@ void targetChangeClearsAllCachesPagesAndTransientState() {
         expect(model.slotPageIndex() == 1, "expected populated old Actor page");
     }
     expect(model.selectSlot(0), "expected old Actor slot selected");
-    model.selectTattoo(tattoo("Foot", 0, "FEET"));
+    model.selectTattoo(tattoo("Foot", 0, "足"));
     expect(model.previewTattoo(), "expected preview before target change");
     expect(model.selectCrosshairTarget(), "expected target switch");
     expect(!model.targetSlot() && !model.previewTattoo() && !model.previewAppearance() &&

@@ -1,4 +1,4 @@
-#include "runtime/HotkeyBinding.h"
+﻿#include "runtime/HotkeyBinding.h"
 
 #include <array>
 #include <cctype>
@@ -11,7 +11,7 @@ namespace stui::runtime {
 namespace {
 
 constexpr std::array kHotkeyOptions{
-    HotkeyOption{"None", std::nullopt},
+    HotkeyOption{"无", std::nullopt},
     HotkeyOption{"F1", 0x3B}, HotkeyOption{"F2", 0x3C},
     HotkeyOption{"F3", 0x3D}, HotkeyOption{"F4", 0x3E},
     HotkeyOption{"F5", 0x3F}, HotkeyOption{"F6", 0x40},
@@ -130,7 +130,7 @@ std::optional<std::uint32_t> HotkeyBinding::key() const noexcept {
 std::string HotkeyBinding::label() const {
     const std::scoped_lock lock(mutex_);
     if (!key_) {
-        return "None";
+        return "无";
     }
     for (const auto& option : kHotkeyOptions) {
         if (option.key == key_) {

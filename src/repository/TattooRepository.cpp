@@ -1,4 +1,4 @@
-#include "repository/TattooRepository.h"
+﻿#include "repository/TattooRepository.h"
 #include "repository/TattooMaterialClassification.h"
 
 #include <algorithm>
@@ -128,7 +128,7 @@ std::vector<TattooTextureOption> effectiveTextureOptions(
     std::unordered_set<std::string> seenPaths;
     if (defaultPath && !defaultPath->empty()) {
         effective.push_back(TattooTextureOption{
-            .label = "Pack default",
+            .label = "包默认",
             .path = *defaultPath,
         });
         seenPaths.insert(foldASCII(*defaultPath));

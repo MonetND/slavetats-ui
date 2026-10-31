@@ -32,6 +32,12 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
+# Chinese UI text is stored as UTF-8 literals; MSVC must treat both source and
+# execution charset as UTF-8 or the glyphs degrade to the ANSI code page.
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(GNUInstallDirs)

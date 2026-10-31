@@ -1,4 +1,4 @@
-#include "native/ActorTargetProvider.h"
+﻿#include "native/ActorTargetProvider.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -86,7 +86,7 @@ void normalizesEmptyDisplayName() {
     const auto result = stui::native::resolveCrosshairActorTarget(bindings);
 
     expect(result.has_value(), "expected unnamed loaded Actor resolution");
-    expect(result->displayName == "Unnamed Actor", "expected unnamed Actor fallback label");
+    expect(result->displayName == "无名角色", "expected unnamed Actor fallback label");
 }
 
 }  // namespace

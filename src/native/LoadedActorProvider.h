@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "native/ActorTarget.h"
 
@@ -58,7 +58,7 @@ struct LoadedActorProviderBindings {
     LoadedActorList candidates) {
     for (auto& candidate : candidates) {
         if (candidate.target.displayName.empty()) {
-            candidate.target.displayName = "Unnamed Actor";
+            candidate.target.displayName = "无名角色";
         }
     }
     candidates.erase(std::remove_if(candidates.begin(), candidates.end(), [](const auto& candidate) {

@@ -1,4 +1,4 @@
-#include "native/NearbyActorProvider.h"
+﻿#include "native/NearbyActorProvider.h"
 
 #include <RE/Skyrim.h>
 
@@ -11,7 +11,7 @@ namespace {
 NearbyActorScanResult unavailable() {
     return std::unexpected(core::ServiceError{
         .code = core::ServiceErrorCode::actorNotFound,
-        .message = "Nearby Actor scan is unavailable.",
+        .message = "附近角色扫描不可用。",
     });
 }
 
@@ -42,7 +42,7 @@ NearbyActorScanResult scanNearbyActors() {
             .target = ActorTarget{
                 .kind = ActorTargetKind::nearby,
                 .formId = actor->GetFormID(),
-                .displayName = displayName && *displayName ? displayName : "Unnamed Actor",
+                .displayName = displayName && *displayName ? displayName : "无名角色",
             },
             .distance = distance,
         });

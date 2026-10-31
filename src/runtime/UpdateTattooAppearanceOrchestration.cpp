@@ -1,4 +1,4 @@
-#include "runtime/UpdateTattooAppearanceOrchestration.h"
+﻿#include "runtime/UpdateTattooAppearanceOrchestration.h"
 
 #include "runtime/AppliedTattooHandleMembership.h"
 
@@ -13,7 +13,7 @@ core::UpdateTattooAppearanceResult updateTattooAppearance(
     if (!actor) {
         return std::unexpected(core::ServiceError{
             core::ServiceErrorCode::actorNotFound,
-            "Actor not found",
+            "未找到角色",
         });
     }
 
