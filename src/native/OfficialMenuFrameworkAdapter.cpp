@@ -1446,7 +1446,7 @@ bool renderActorTargetHeader(
         ImGuiMCP::TextUnformatted(pickerTitle.data());
         ImGuiMCP::BeginDisabled(workflow.isActorTargetResolutionInFlight());
         auto search = workflow.explicitNpcSearch();
-        if (inputTextString("Search##ExplicitNpc", search)) {
+        if (inputTextString("搜索##ExplicitNpc", search)) {
             workflow.setExplicitNpcSearch(std::move(search));
         }
         ImGuiMCP::EndDisabled();
@@ -1581,12 +1581,12 @@ void renderLoadoutScreen(NativeSlotWorkflowModel& workflow, const std::function<
                     ImGuiMCP::Text("%s: %zu", slotAreaLabel(static_cast<core::TattooArea>(index)).data(), counts[index]);
             }
             ImGuiMCP::BeginDisabled(pending);
-            (void)inputTextString("Name##Loadout", workflow.tattooLoadoutName());
+            (void)inputTextString("名称##Loadout", workflow.tattooLoadoutName());
             ImGuiMCP::EndDisabled();
             primaryEnabled = canSaveLoadoutName(workflow.tattooLoadouts(), workflow.tattooLoadoutName(), pending);
         } else if (screen == TattooLoadoutScreen::manage) {
             ImGuiMCP::BeginDisabled(pending);
-            (void)inputTextString("Name##RenameLoadout", workflow.tattooLoadoutName());
+            (void)inputTextString("名称##RenameLoadout", workflow.tattooLoadoutName());
             if (ImGuiMCP::Button("删除...")) (void)workflow.applyTattooLoadoutIntent(TattooLoadoutIntent::requestDelete);
             ImGuiMCP::EndDisabled();
             primaryEnabled = primaryEnabled && workflow.tattooLoadoutName().find_first_not_of(" \t\r\n") != std::string::npos;
@@ -1744,7 +1744,7 @@ void renderCurrentSlots(
                     }
                 }
                 ImGuiMCP::BeginDisabled(!targetActionsEnabled);
-                if (ImGuiMCP::TabItemButton("Refresh##SlotAreaRefresh")) {
+                if (ImGuiMCP::TabItemButton("刷新##SlotAreaRefresh")) {
                     workflow.refreshSelectedArea();
                 }
                 ImGuiMCP::EndDisabled();
@@ -2526,7 +2526,7 @@ void renderEditAppearance(
     if (ImGuiMCP::BeginPopupModal("保存外观预设")) {
         ImGuiMCP::TextUnformatted("将当前外观数值保存为:");
         ImGuiMCP::SetNextItemWidth(320.0F);
-        (void)inputTextString("Name##SaveAppearancePreset", presetName);
+        (void)inputTextString("名称##SaveAppearancePreset", presetName);
         auto candidateName = std::string_view(presetName);
         while (!candidateName.empty() &&
             (candidateName.front() == ' ' || candidateName.front() == '\t' ||
@@ -2564,7 +2564,7 @@ void renderEditAppearance(
             ImGuiMCP::TextUnformatted(
                 appearancePresets[*selectedAppearancePreset].name.c_str());
             ImGuiMCP::SetNextItemWidth(320.0F);
-            (void)inputTextString("Name##RenameAppearancePreset", renamedPresetName);
+            (void)inputTextString("名称##RenameAppearancePreset", renamedPresetName);
             if (appearancePresetError &&
                 !workflow.appearancePresetRetryAvailable()) {
                 ImGuiMCP::TextUnformatted(appearancePresetError->message.c_str());
@@ -3634,14 +3634,14 @@ void OfficialMenuFrameworkAdapter::renderFoundation(
         bool glossy = displayed &&
             (displayed->glossiness > 0.0F || displayed->specularStrength > 0.0F);
         ImGuiMCP::SetNextItemWidth(105.0F);
-        if (ImGuiMCP::ColorEdit3("Ink##CatalogPreview", inkValues,
+        if (ImGuiMCP::ColorEdit3("墨色##CatalogPreview", inkValues,
                 ImGuiMCP::ImGuiColorEditFlags_NoInputs)) {
             slotRuntime.setCatalogPreviewInk(tattooColorValue(
                 {inkValues[0], inkValues[1], inkValues[2]}));
         }
         ImGuiMCP::SameLine();
         ImGuiMCP::SetNextItemWidth(105.0F);
-        if (ImGuiMCP::ColorEdit3("Glow##CatalogPreview", glowValues,
+        if (ImGuiMCP::ColorEdit3("发光##CatalogPreview", glowValues,
                 ImGuiMCP::ImGuiColorEditFlags_NoInputs)) {
             slotRuntime.setCatalogPreviewGlow(tattooColorValue(
                 {glowValues[0], glowValues[1], glowValues[2]}));
