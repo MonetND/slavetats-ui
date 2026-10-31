@@ -1,0 +1,62 @@
+name: CN Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cn-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: windows-2022
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Configure vcpkg environment
+        shell: pwsh
+        run: '"VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append'
+
+      - name: Build Release
+        shell: pwsh
+        run: ./build.ps1 -Config release
+
+      - name: Verify Chinese literals survived the compile
+        shell: pwsh
+        run: |
+          $dll = Get-Item 'build/release/SlaveTatsUI.dll'
+          Write-Host "DLL size: $($dll.Length) bytes"
+          Write-Host "DLL SHA256: $((Get-FileHash -LiteralPath $dll.FullName -Algorithm SHA256).Hash)"
+          $text = [System.Text.Encoding]::UTF8.GetString([System.IO.File]::ReadAllBytes($dll.FullName))
+          $probes = @(
+            '纹身', '当前槽位', '保存配置', '浏览', '收藏',
+            '打开纹身库', '外观预设', '最近使用', '材质', '筛选'
+          )
+          $missing = @()
+          foreach ($probe in $probes) {
+            if (-not $text.Contains($probe)) { $missing += $probe }
+          }
+          if ($missing.Count -gt 0) {
+            throw "Compiled DLL is missing Chinese literals: $($missing -join ', ')"
+          }
+          Write-Host "Chinese literal probes passed ($($probes.Count) probes)."
+
+      - name: Package release
+        shell: pwsh
+        run: ./scripts/release/Package-Release.ps1 -AssetStem 'SlaveTatsUI-1.8.0-beta.2-cn'
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SlaveTatsUI-1.8.0-beta.2-cn
+          path: |
+            artifacts/release/SlaveTatsUI-1.8.0-beta.2-cn.zip
+            artifacts/release/SlaveTatsUI-1.8.0-beta.2-cn.zip.sha256
+          if-no-files-found: error
+          retention-days: 7
