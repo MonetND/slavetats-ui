@@ -10,7 +10,7 @@ namespace {
 ActorTargetResult actorNotFound() {
     return std::unexpected(core::ServiceError{
         .code = core::ServiceErrorCode::actorNotFound,
-        .message = "No valid crosshair Actor.",
+        .message = "无有效准星角色。",
     });
 }
 

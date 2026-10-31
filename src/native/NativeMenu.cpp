@@ -59,7 +59,7 @@ RegistrationResult NativeMenu::registerMenu(MenuFrameworkPort& port) {
     if (*window == 0) {
         return fail(MenuRegistrationError::windowCreationFailed);
     }
-    if (auto result = port.addSectionItem("Tattoo Browser", &NativeMenu::sectionCallback);
+    if (auto result = port.addSectionItem("纹身浏览", &NativeMenu::sectionCallback);
         !result) {
         return fail(result.error());
     }

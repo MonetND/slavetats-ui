@@ -1,4 +1,4 @@
-#include "native/NativeMenu.h"
+﻿#include "native/NativeMenu.h"
 
 #include <iostream>
 #include <optional>
@@ -71,7 +71,7 @@ void registersOneBlockingTattooBrowser() {
 
     expect(result.has_value(), "expected native menu registration");
     expect(port.section == "SlaveTatsUI", "expected owning section");
-    expect(port.itemPath == "Tattoo Browser", "expected browser item");
+    expect(port.itemPath == "纹身浏览", "expected browser item");
     expect(port.itemRegistrations == 1, "expected one browser item");
     expect(port.windowRegistrations == 1, "expected one native window");
     expect(port.pauseGame, "expected window to block gameplay input");
