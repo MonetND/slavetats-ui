@@ -183,11 +183,11 @@ void editAppearanceHeaderAppendsLivePreviewStatusToActorIdentity() {
     const ActorTarget lydia{ActorTargetKind::crosshair, 0xA2C8E, "Lydia"};
     expect(formatActorTargetIdentityWithPreviewStatus(
                false, &player, LivePreviewStatus::pending) ==
-               "Target: Player [0x00000014] - Preview pending...",
+               "目标: 玩家 [0x00000014] - 预览待定...",
         "expected pending preview status after the Player identity");
     expect(formatActorTargetIdentityWithPreviewStatus(
                false, &lydia, LivePreviewStatus::applied) ==
-               "Target: Lydia [0x000A2C8E] - Preview applied",
+               "目标: Lydia [0x000A2C8E] - 预览已应用",
         "expected applied preview status after the crosshair target identity");
     expect(formatActorTargetIdentityWithPreviewStatus(
                false, &player, LivePreviewStatus::clean) ==
@@ -195,7 +195,7 @@ void editAppearanceHeaderAppendsLivePreviewStatusToActorIdentity() {
         "expected clean preview state not to add redundant text");
     expect(formatActorTargetIdentityWithPreviewStatus(
                true, &player, LivePreviewStatus::pending) ==
-               "Scanning nearby Actors... - Preview pending...",
+               "扫描附近角色... - 预览待定...",
         "expected target resolution status to remain visible with preview status");
 }
 
@@ -204,12 +204,12 @@ void actorTargetControlsRespectMutationAndCrosshairMode() {
     const NearbyActorCandidate nearby{
         ActorTarget{ActorTargetKind::nearby, 0xA2C8E, "Lydia"}, 42.4F};
     expect(formatNearbyActorSelectorLabel(nearby, 2) ==
-               "Lydia [0x000A2C8E] - 42 units##NearbyActor2",
+               "Lydia [0x000A2C8E] - 42米##NearbyActor2",
         "expected nearby selector labels to include identity, distance, and stable ID");
     const LoadedActorCandidate explicitNpc{
         ActorTarget{ActorTargetKind::explicitNpc, 0x1020304, "Serana"}, 128.6F};
     expect(formatLoadedActorSelectorLabel(explicitNpc, 4) ==
-               "Serana [0x01020304] - 129 units##ExplicitNpc4",
+               "Serana [0x01020304] - 129米##ExplicitNpc4",
         "expected explicit NPC selector labels to include identity, distance, and stable ID");
     const auto nearbyControls = actorTargetControlPresentation(
         ActorTargetKind::nearby, false, false);
@@ -633,7 +633,7 @@ void catalogMaterialBadgesUseStableOrderAndIgnoreLegacyMetadata() {
     allThree.glossiness = 1.0F;
 
     expect(stui::native::catalogMaterialBadgeLabels(allThree) ==
-            std::vector<std::string_view>{"Glow", "Bump", "Gloss"},
+            std::vector<std::string_view>{"光", "凸", "亮"},
         "expected stable Glow Bump Gloss badge order");
     expect(stui::native::catalogMaterialBadgeLabels({}).empty(),
         "expected legacy metadata to produce no material badges");
@@ -648,8 +648,8 @@ void catalogMaterialBadgesAnchorBottomLeftAndOmitOverflow() {
     const auto layouts = stui::native::calculateCatalogMaterialBadgeLayouts(
         labels, 160.0F, 120.0F, 16.0F, 4.0F, 2.0F, 4.0F, 4.0F, 32.0F);
 
-    expect(layouts.size() == 3 && layouts[0].label == "光" &&
-            layouts[1].label == "凸" && layouts[2].label == "亮",
+    expect(layouts.size() == 3 && layouts[0].label == "Glow" &&
+            layouts[1].label == "Bump" && layouts[2].label == "Gloss",
         "expected every fitting material badge in label order");
     expect(layouts[0].bounds.x == 4.0F && layouts[0].bounds.y == 96.0F,
         "expected first material badge anchored to the thumbnail bottom-left");
@@ -660,7 +660,7 @@ void catalogMaterialBadgesAnchorBottomLeftAndOmitOverflow() {
 
     const auto constrained = stui::native::calculateCatalogMaterialBadgeLayouts(
         labels, 90.0F, 120.0F, 16.0F, 4.0F, 2.0F, 4.0F, 4.0F, 32.0F);
-    expect(constrained.size() == 1 && constrained.front().label == "光",
+    expect(constrained.size() == 1 && constrained.front().label == "Glow",
         "expected a narrow thumbnail to omit rather than clip overflow badges");
 
     const auto shortThumbnail = stui::native::calculateCatalogMaterialBadgeLayouts(
@@ -917,7 +917,7 @@ void launcherShowsBuiltModVersion() {
 void appearancePresetPresentationCoversEmptyLimitAndPendingStates() {
     using namespace stui::native;
     expect(appearancePresetStatusMessage(AppearancePresetUiState::unavailable) ==
-            "Unavailable" &&
+            "不可用" &&
             appearancePresetStatusMessage(AppearancePresetUiState::empty) ==
                 "尚未保存外观预设。" &&
             appearancePresetStatusMessage(AppearancePresetUiState::ready).empty() &&
@@ -1576,24 +1576,24 @@ void visibleSlotPathsIncludeOnlyOwnedCardsOnTheCurrentPage() {
 void pickerAndPreviewHelpersExposeExactTargetIntent() {
     const stui::native::ActorTarget player;
     expect(stui::native::formatSlotTargetLabel(
-               &player, stui::core::TattooArea::body, 2) == "Player / BODY / Slot 2",
+               &player, stui::core::TattooArea::body, 2) == "玩家 / 身 / 槽 2",
         "expected exact Player BODY target label");
     const stui::native::ActorTarget lydia{
         stui::native::ActorTargetKind::crosshair, 0xA2C8E, "Lydia"};
     expect(stui::native::formatSlotTargetLabel(
-               &lydia, stui::core::TattooArea::face, 3) == "Lydia / FACE / Slot 3",
+               &lydia, stui::core::TattooArea::face, 3) == "Lydia / 脸 / 槽 3",
         "expected NPC context to match the active Actor without repeating the form ID");
     const stui::native::ActorTarget unnamed{
         stui::native::ActorTargetKind::crosshair, 0x1234, ""};
     expect(stui::native::formatSlotTargetLabel(
-               &unnamed, stui::core::TattooArea::hands, 1) == "Unnamed Actor / HANDS / Slot 1",
+               &unnamed, stui::core::TattooArea::hands, 1) == "无名角色 / 手 / 槽 1",
         "expected empty Actor names normalized consistently with the shared header");
     expect(stui::native::formatSlotTargetLabel(
-               nullptr, stui::core::TattooArea::feet, 0) == "No active Actor / FEET / Slot 0",
+               nullptr, stui::core::TattooArea::feet, 0) == "无活动角色 / 脚 / 槽 0",
         "expected absent Actor context never to fall back to Player");
-    expect(stui::native::previewApplyButtonLabel(2) == "Apply to Slot 2",
+    expect(stui::native::previewApplyButtonLabel(2) == "应用到槽 2",
         "expected Apply action to name the target slot");
-    expect(stui::native::previewApplyButtonLabel(2, true) == "Retry Slot 2",
+    expect(stui::native::previewApplyButtonLabel(2, true) == "重试槽 2",
         "expected failed Apply action to identify a retry");
     expect(stui::native::isPreviewApplyEnabled(
                stui::native::SlotWorkflowScreen::preview, true, true),
@@ -1608,14 +1608,14 @@ void pickerAndPreviewHelpersExposeExactTargetIntent() {
 
 void removeHelpersRequireExplicitTargetConfirmation() {
     expect(stui::native::removeButtonLabel(
-               2, stui::native::RemoveButtonState::initial) == "Remove from Slot 2",
+               2, stui::native::RemoveButtonState::initial) == "从槽位移除 2",
         "expected Remove action to name the target slot");
     expect(stui::native::removeButtonLabel(
-               2, stui::native::RemoveButtonState::retryRemove) == "Retry Remove Slot 2",
+               2, stui::native::RemoveButtonState::retryRemove) == "重试移除槽 2",
         "expected failed Remove action to identify a retry");
     expect(stui::native::removeButtonLabel(
                2, stui::native::RemoveButtonState::retrySynchronization) ==
-               "Retry Sync Slot 2",
+               "重试同步槽 2",
         "expected post-mutation failure to retry synchronization only");
     expect(stui::native::isRemoveConfirmationEnabled(
                stui::native::SlotWorkflowScreen::removeConfirmation, true),
